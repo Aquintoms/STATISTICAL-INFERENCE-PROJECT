@@ -1,0 +1,546 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\documentclass[
+  10pt,
+]{article}
+\usepackage{xcolor}
+\usepackage[left=2cm, right=2cm, top=2cm, bottom=2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{5}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs,array}
+\newcounter{none} % for unnumbered tables
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\usepackage{microtype}
+\usepackage{fvextra}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+\sloppy
+\usepackage{longtable}
+\usepackage{fvextra}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Statistical Inference on Global Health Data: A comprehensive analysis of the WHO Life Expectancy Dataset},
+  pdfauthor={Wesley M. Gathua \textbar{} Reg No: 223347},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Statistical Inference on Global Health Data: A comprehensive analysis of the WHO Life Expectancy Dataset}
+\author{Wesley M. Gathua \textbar{} Reg No: 223347}
+\date{2026-06-19}
+
+\begin{document}
+\maketitle
+
+\newpage
+
+The dataset was loaded successfully. We proceeded to do some checks onto the dataset.\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Checking for dimensions}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Dimensions:"}\NormalTok{, }\FunctionTok{dim}\NormalTok{(df), }\StringTok{"}\SpecialCharTok{\textbackslash{}n\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Dimensions: 2864 21
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Checking column names}
+\FunctionTok{names}\NormalTok{(df)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  [1] "Country"                     "Region"                     
+##  [3] "Year"                        "Infant_deaths"              
+##  [5] "Under_five_deaths"           "Adult_mortality"            
+##  [7] "Alcohol_consumption"         "Hepatitis_B"                
+##  [9] "Measles"                     "BMI"                        
+## [11] "Polio"                       "Diphtheria"                 
+## [13] "Incidents_HIV"               "GDP_per_capita"             
+## [15] "Population_mln"              "Thinness_ten_nineteen_years"
+## [17] "Thinness_five_nine_years"    "Schooling"                  
+## [19] "Economy_status_Developed"    "Economy_status_Developing"  
+## [21] "Life_expectancy"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Checking data types}
+\FunctionTok{str}\NormalTok{(df)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 'data.frame':    2864 obs. of  21 variables:
+##  $ Country                    : chr  "Turkiye" "Spain" "India" "Guyana" ...
+##  $ Region                     : chr  "Middle East" "European Union" "Asia" "South America" ...
+##  $ Year                       : int  2015 2015 2007 2006 2012 2006 2015 2000 2001 2008 ...
+##  $ Infant_deaths              : num  11.1 2.7 51.5 32.8 3.4 9.8 6.6 8.7 22 15.3 ...
+##  $ Under_five_deaths          : num  13 3.3 67.9 40.5 4.3 11.2 8.2 10.1 26.1 17.8 ...
+##  $ Adult_mortality            : num  105.8 57.9 201.1 222.2 58 ...
+##  $ Alcohol_consumption        : num  1.32 10.35 1.57 5.68 2.89 ...
+##  $ Hepatitis_B                : int  97 97 60 93 97 88 97 88 97 97 ...
+##  $ Measles                    : int  65 94 35 74 89 86 97 99 87 92 ...
+##  $ BMI                        : num  27.8 26 21.2 25.3 27 26.4 26.2 25.9 27.9 26.5 ...
+##  $ Polio                      : int  97 97 67 92 94 89 97 99 97 96 ...
+##  $ Diphtheria                 : int  97 97 64 93 94 89 97 99 99 90 ...
+##  $ Incidents_HIV              : num  0.08 0.09 0.13 0.79 0.08 0.16 0.08 0.08 0.13 0.43 ...
+##  $ GDP_per_capita             : int  11006 25742 1076 4146 33995 9110 9313 8971 3708 2235 ...
+##  $ Population_mln             : num  78.53 46.44 1183.21 0.75 7.91 ...
+##  $ Thinness_ten_nineteen_years: num  4.9 0.6 27.1 5.7 1.2 2 2.3 2.3 4 2.9 ...
+##  $ Thinness_five_nine_years   : num  4.8 0.5 28 5.5 1.1 1.9 2.3 2.3 3.9 3.1 ...
+##  $ Schooling                  : num  7.8 9.7 5 7.9 12.8 7.9 12 10.2 9.6 10.9 ...
+##  $ Economy_status_Developed   : int  0 1 0 0 1 0 0 1 0 0 ...
+##  $ Economy_status_Developing  : int  1 0 1 1 0 1 1 0 1 1 ...
+##  $ Life_expectancy            : num  76.5 82.8 65.4 67 81.7 78.2 71.2 71.2 71.9 68.7 ...
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Checking for null values}
+\FunctionTok{colSums}\NormalTok{(}\FunctionTok{is.na}\NormalTok{(df))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                     Country                      Region 
+##                           0                           0 
+##                        Year               Infant_deaths 
+##                           0                           0 
+##           Under_five_deaths             Adult_mortality 
+##                           0                           0 
+##         Alcohol_consumption                 Hepatitis_B 
+##                           0                           0 
+##                     Measles                         BMI 
+##                           0                           0 
+##                       Polio                  Diphtheria 
+##                           0                           0 
+##               Incidents_HIV              GDP_per_capita 
+##                           0                           0 
+##              Population_mln Thinness_ten_nineteen_years 
+##                           0                           0 
+##    Thinness_five_nine_years                   Schooling 
+##                           0                           0 
+##    Economy_status_Developed   Economy_status_Developing 
+##                           0                           0 
+##             Life_expectancy 
+##                           0
+\end{verbatim}
+
+We saw that there 2864 rows and 21 columns in the dataset.\\
+There were no missing values in all the variables. In order to be sure, we also proceeded to check if there were rows labeled `null'.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Checking if there were values masked as \textquotesingle{}null\textquotesingle{}, \textquotesingle{}NULL\textquotesingle{} or " "}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Searching for text based masked nulls }\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Searching for text based masked nulls
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{colSums}\NormalTok{(df }\SpecialCharTok{==} \StringTok{"null"} \SpecialCharTok{|}\NormalTok{ df }\SpecialCharTok{==} \StringTok{"NULL"} \SpecialCharTok{|}\NormalTok{ df }\SpecialCharTok{==} \StringTok{""}\NormalTok{, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                     Country                      Region 
+##                           0                           0 
+##                        Year               Infant_deaths 
+##                           0                           0 
+##           Under_five_deaths             Adult_mortality 
+##                           0                           0 
+##         Alcohol_consumption                 Hepatitis_B 
+##                           0                           0 
+##                     Measles                         BMI 
+##                           0                           0 
+##                       Polio                  Diphtheria 
+##                           0                           0 
+##               Incidents_HIV              GDP_per_capita 
+##                           0                           0 
+##              Population_mln Thinness_ten_nineteen_years 
+##                           0                           0 
+##    Thinness_five_nine_years                   Schooling 
+##                           0                           0 
+##    Economy_status_Developed   Economy_status_Developing 
+##                           0                           0 
+##             Life_expectancy 
+##                           0
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Checking for suspicious zeros (0) in the health metrics}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{ Investigating null values masquerading as 0s }\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Investigating null values masquerading as 0s
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Zeros in Life Expectancy:"}\NormalTok{, }\FunctionTok{sum}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{Life\_expectancy }\SpecialCharTok{==} \DecValTok{0}\NormalTok{, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{), }\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{ )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Zeros in Life Expectancy: 0
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Zeros in under 5 deaths:"}\NormalTok{, }\FunctionTok{sum}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{Under\_five\_deaths }\SpecialCharTok{==} \DecValTok{0}\NormalTok{, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{), }\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Zeros in under 5 deaths: 0
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Zeros in under Adult Mortality:"}\NormalTok{, }\FunctionTok{sum}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{Adult\_mortality }\SpecialCharTok{==} \DecValTok{0}\NormalTok{, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{), }\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Zeros in under Adult Mortality: 0
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Zeros in under alcohol consumption:"}\NormalTok{, }\FunctionTok{sum}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{Alcohol\_consumption }\SpecialCharTok{==} \DecValTok{0}\NormalTok{, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{), }\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Zeros in under alcohol consumption: 38
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Zeros in under BMI:"}\NormalTok{, }\FunctionTok{sum}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{BMI }\SpecialCharTok{==} \DecValTok{0}\NormalTok{, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{), }\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Zeros in under BMI: 0
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Zeros in under Life Expectancy:"}\NormalTok{, }\FunctionTok{sum}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{Life\_expectancy }\SpecialCharTok{==} \DecValTok{0}\NormalTok{, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{), }\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Zeros in under Life Expectancy: 0
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Zeros in under GDP per capita:"}\NormalTok{, }\FunctionTok{sum}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{GDP\_per\_capita }\SpecialCharTok{==} \DecValTok{0}\NormalTok{, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{), }\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Zeros in under GDP per capita: 0
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Zeros in incidents in HIV:"}\NormalTok{, }\FunctionTok{sum}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{Incidents\_HIV }\SpecialCharTok{==} \DecValTok{0}\NormalTok{, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{), }\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Zeros in incidents in HIV: 0
+\end{verbatim}
+
+It was seen that there were no masked values as ``null'', `null' or an empty
+string.\\
+Upon investigating the zeros, there was no suspicious activity of zeros. The
+selected columns for this check were guided by real world scenarios. This is
+such as no country could have a GDP of zero or an entire population could have
+a BMI of zero. We did not check for the various diseases because it is possible
+for the various developed countries to have incidences where there are no
+certain diseases because of their well developed health care system which can
+also be backed by their robust immunization procedures. With regards with
+alcohol where we obtained 38 zeros, we needed to identify if these countries
+came from the Muslim majority countries or countries under an Islamic regime
+of which according to their religious views, consumption of alcohol is
+prohibited.\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Checking which countries have an alcohol consumption of zero}
+\FunctionTok{unique}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{Country[df}\SpecialCharTok{$}\NormalTok{Alcohol\_consumption }\SpecialCharTok{==} \DecValTok{0}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Saudi Arabia" "Kuwait"       "Somalia"      "Bangladesh"   "Mauritania"  
+## [6] "Afghanistan"  "Libya"
+\end{verbatim}
+
+The Muslim majority hypothesis proved to be correct as the countries with 0
+alcohol consumption came from Islamic nations.\\
+We needed to check if the highly-developed countries indeed had no
+vaccine preventable diseases. We also proceeded to investigate if presence
+of zeros meant that no immunization coverage was done or it meant that there
+were no such cases.\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Checking if it was immunization coverage or case count}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Summary of disease columns }\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Summary of disease columns
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(df[ , }\FunctionTok{c}\NormalTok{(}\StringTok{"Measles"}\NormalTok{, }\StringTok{"Polio"}\NormalTok{, }\StringTok{"Diphtheria"}\NormalTok{)])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##     Measles          Polio        Diphtheria   
+##  Min.   :10.00   Min.   : 8.0   Min.   :16.00  
+##  1st Qu.:64.00   1st Qu.:81.0   1st Qu.:81.00  
+##  Median :83.00   Median :93.0   Median :93.00  
+##  Mean   :77.34   Mean   :86.5   Mean   :86.27  
+##  3rd Qu.:93.00   3rd Qu.:97.0   3rd Qu.:97.00  
+##  Max.   :99.00   Max.   :99.0   Max.   :99.00
+\end{verbatim}
+
+An inspection of these diseases proved that there was a strict maximum threshold
+of 99. For actual cases, this value would scale to higher figures such as tens
+of thousands. This evidently proved that these values were actual percentage
+coverage rather than actual case counts.\\
+We needed to do an investigation of these percentages. This was to check whether
+the percentages meant 99\% covered or not covered. This was done by the use of
+a correlation. If it meant covered, there would be an inverse relationship
+between the disease and \texttt{Infant\_deaths} or \texttt{Under\_five\_deaths}.\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cat}\NormalTok{(}\StringTok{"The correlation between the Measles disease (coverage) and death of}
+\StringTok{    children under 5 years is"}\NormalTok{, }\FunctionTok{cor}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{Measles, df}\SpecialCharTok{$}\NormalTok{Under\_five\_deaths, }\AttributeTok{use =} \StringTok{\textquotesingle{}complete.obs\textquotesingle{}}\NormalTok{), }\StringTok{"}\SpecialCharTok{\textbackslash{}n\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## The correlation between the Measles disease (coverage) and death of
+##     children under 5 years is -0.5129717
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cat}\NormalTok{(}\StringTok{"The correlation between the Polio disease (coverage) and death of}
+\StringTok{    infants is"}\NormalTok{, }\FunctionTok{cor}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{Polio, df}\SpecialCharTok{$}\NormalTok{Infant\_deaths, }\AttributeTok{use =} \StringTok{\textquotesingle{}complete.obs\textquotesingle{}}\NormalTok{), }\StringTok{"}\SpecialCharTok{\textbackslash{}n\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## The correlation between the Polio disease (coverage) and death of
+##     infants is -0.7407905
+\end{verbatim}
+
+This showed an inverse relationship between the diseases and the child mortality.
+This meant that the values exhibited by the diseases meant the extensiveness of
+the vaccinations. A 99\% coverage meant that most parts of this particular
+country was vaccinated against the specific disease.\\
+
+The project's next step was to check if indeed the high immunization coverage
+came from the highly developed countries. This would validate our hypothesis of
+developed countries having better healthcare. We began by investigating the
+robustness of \texttt{Economy\_status\_Developing} and \texttt{Economy\_status\_Developed}
+features to ensure that they were mutually exclusive.\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Investigating that the two economy columns do not add up to 2. Mutual}
+\CommentTok{\# exclusivity is needed}
+\NormalTok{economy\_check }\OtherTok{\textless{}{-}}\NormalTok{ df}\SpecialCharTok{$}\NormalTok{Economy\_status\_Developing }\SpecialCharTok{+}\NormalTok{ df}\SpecialCharTok{$}\NormalTok{Economy\_status\_Developed}
+
+\CommentTok{\# Summary of the calculation}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Summary of the economy checks }\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Summary of the economy checks
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(economy\_check)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##       1       1       1       1       1       1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Tabular form of these two columns}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{ Cross validation table of the two economy features }\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Cross validation table of the two economy features
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{table}\NormalTok{(}\AttributeTok{Developed =}\NormalTok{ df}\SpecialCharTok{$}\NormalTok{Economy\_status\_Developed, }\AttributeTok{Developing =}\NormalTok{ df}\SpecialCharTok{$}\NormalTok{Economy\_status\_Developing)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##          Developing
+## Developed    0    1
+##         0    0 2272
+##         1  592    0
+\end{verbatim}
+
+We saw that the two columns were indeed mutually exclusive as they both did not
+add up to 2. The cross validation table backs this up whereby there are no
+individual countries where they are both developed and developing. This is given by the
+\texttt{0}. Additionally, the table also informs us that there are \texttt{2272} records from
+developing countries and there are \texttt{592} records from developed countries.\\
+
+We now proceeded to see if the high vaccination coverage came from developed or
+developing countries.\\
+
+\end{document}

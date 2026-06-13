@@ -1,0 +1,173 @@
+---
+title: 'Statistical Inference on Global Health Data: A comprehensive analysis of the WHO Life Expectancy Dataset'
+author: 'Wesley M. Gathua | Reg No: 223347'
+date: "2026-06-19"
+output:
+  bookdown::pdf_document2:
+    latex_engine: xelatex
+    extra_dependencies:
+    - longtable
+    - fvextra
+    keep_tex: true
+    toc: false
+fontsize: 10pt
+#bibliography: references.bib
+#csl: apa.csl
+header-includes:
+- \usepackage{microtype}
+- \usepackage{fvextra}
+- \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+- \sloppy
+geometry: left=2cm, right=2cm, top=2cm, bottom=2cm
+---
+
+\newpage
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+
+required_pkgs <- c("ggplot2", "corrplot", "patchwork", "kableExtra", "broom", "stargazer")
+
+new_pkgs <- required_pkgs[!required_pkgs %in% rownames(installed.packages())]
+if (length(new_pkgs) > 0) {
+  install.packages(new_pkgs, repos = "[https://cloud.r-project.org](https://cloud.r-project.org)")
+}
+
+library(ggplot2)
+library(corrplot)
+library(patchwork)
+library(kableExtra)
+library(broom)
+library(stargazer)
+library(janitor)
+library(tidyverse)
+
+# Global ggplot theme
+theme_set(theme_minimal(base_size = 12) +
+            theme(plot.title = element_text(face = "bold", size = 13),
+                  plot.subtitle = element_text(color = "grey40")))
+```
+
+```{r loading the data, echo=FALSE}
+df <- read.csv("C:/Users/HP/OneDrive - Strathmore University/STRATH UNI/FIRST YEAR/SEMESTER III/UNITS/STATISTICAL INFERENCE IN BIG DATA/STATISTICAL_INFERENCE_(BIG_DATA)/STATISTICAL-INFERENCE-PROJECT/Life-Expectancy-Data-Updated.csv")
+```
+The dataset was loaded successfully. We proceeded to do some checks onto the dataset.\
+
+```{r data investigation, echo=TRUE}
+# Checking for dimensions
+cat("Dimensions:", dim(df), "\n\n")
+
+# Checking column names
+names(df)
+
+# Checking data types
+str(df)
+
+# Checking for null values
+colSums(is.na(df))
+```
+We saw that there 2864 rows and 21 columns in the dataset.\
+There were no missing values in all the variables. In order to be sure, we also proceeded to check if there were rows labeled 'null'.
+
+```{r investigating masked missing values, echo = TRUE}
+# Checking if there were values masked as 'null', 'NULL' or " "
+cat("Searching for text based masked nulls \n")
+colSums(df == "null" | df == "NULL" | df == "", na.rm = TRUE)
+
+# Checking for suspicious zeros (0) in the health metrics
+cat("\n Investigating null values masquerading as 0s \n")
+
+cat("Zeros in Life Expectancy:", sum(df$Life_expectancy == 0, na.rm = TRUE), "\n" )
+cat("Zeros in under 5 deaths:", sum(df$Under_five_deaths == 0, na.rm = TRUE), "\n")
+cat("Zeros in under Adult Mortality:", sum(df$Adult_mortality == 0, na.rm = TRUE), "\n")
+cat("Zeros in under alcohol consumption:", sum(df$Alcohol_consumption == 0, na.rm = TRUE), "\n")
+cat("Zeros in under BMI:", sum(df$BMI == 0, na.rm = TRUE), "\n")
+cat("Zeros in under Life Expectancy:", sum(df$Life_expectancy == 0, na.rm = TRUE), "\n")
+cat("Zeros in under GDP per capita:", sum(df$GDP_per_capita == 0, na.rm = TRUE), "\n")
+cat("Zeros in incidents in HIV:", sum(df$Incidents_HIV == 0, na.rm = TRUE), "\n")
+```
+It was seen that there were no masked values as "null", 'null' or an empty 
+string.\
+Upon investigating the zeros, there was no suspicious activity of zeros. The
+selected columns for this check were guided by real world scenarios. This is
+such as no country could have a GDP of zero or an entire population could have 
+a BMI of zero. We did not check for the various diseases because it is possible 
+for the various developed countries to have incidences where there are no 
+certain diseases because of their well developed health care system which can
+also be backed by their robust immunization procedures. With regards with
+alcohol where we obtained 38 zeros, we needed to identify if these countries 
+came from the Muslim majority countries or countries under an Islamic regime 
+of which according to their religious views, consumption of alcohol is
+prohibited.\
+
+```{r alcohol investigation, echo = TRUE}
+# Checking which countries have an alcohol consumption of zero
+unique(df$Country[df$Alcohol_consumption == 0])
+
+```
+The Muslim majority hypothesis proved to be correct as the countries with 0
+alcohol consumption came from Islamic nations.\
+We needed to check if the highly-developed countries indeed had no 
+vaccine preventable diseases. We also proceeded to investigate if presence 
+of zeros meant that no immunization coverage was done or it meant that there
+were no such cases.\
+
+```{r disease investigations, echo = TRUE}
+# Checking if it was immunization coverage or case count
+cat("Summary of disease columns \n")
+summary(df[ , c("Measles", "Polio", "Diphtheria")])
+```
+An inspection of these diseases proved that there was a strict maximum threshold
+of 99. For actual cases, this value would scale to higher figures such as tens
+of thousands. This evidently proved that these values were actual percentage
+coverage rather than actual case counts.\
+We needed to do an investigation of these percentages. This was to check whether
+the percentages meant 99\% covered or not covered. This was done by the use of 
+a correlation. If it meant covered, there would be an inverse relationship
+between the disease and `Infant_deaths` or `Under_five_deaths`.\
+
+```{r vaccination coverage investigation, echo = TRUE}
+cat("The correlation between the Measles disease (coverage) and death of
+    children under 5 years is", cor(df$Measles, df$Under_five_deaths, use = 'complete.obs'), "\n\n")
+
+cat("The correlation between the Polio disease (coverage) and death of
+    infants is", cor(df$Polio, df$Infant_deaths, use = 'complete.obs'), "\n\n")
+```
+This showed an inverse relationship between the diseases and the child mortality.
+This meant that the values exhibited by the diseases meant the extensiveness of
+the vaccinations. A 99\% coverage meant that most parts of this particular
+country was vaccinated against the specific disease.\
+
+The project's next step was to check if indeed the high immunization coverage
+came from the highly developed countries. This would validate our hypothesis of
+developed countries having better healthcare. We began by investigating the 
+robustness of `Economy_status_Developing` and `Economy_status_Developed`
+features to ensure that they were mutually exclusive.\
+
+```{r economy checks, echo = TRUE}
+# Investigating that the two economy columns do not add up to 2. Mutual
+# exclusivity is needed
+economy_check <- df$Economy_status_Developing + df$Economy_status_Developed
+
+# Summary of the calculation
+cat("Summary of the economy checks \n")
+summary(economy_check)
+
+# Tabular form of these two columns
+cat("\n Cross validation table of the two economy features \n")
+table(Developed = df$Economy_status_Developed, Developing = df$Economy_status_Developing)
+```
+We saw that the two columns were indeed mutually exclusive as they both did not
+add up to 2. The cross validation table backs this up whereby there are no
+individual countries where they are both developed and developing. This is given by the
+`0`. Additionally, the table also informs us that there are `2272` records from 
+developing countries and there are `592` records from developed countries.\
+
+We now proceeded to see if the high vaccination coverage came from developed or
+developing countries.\
+
+```{r vaccination by economy, echo=TRUE}
+
+
+```
+
