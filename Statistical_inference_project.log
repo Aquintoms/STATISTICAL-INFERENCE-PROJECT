@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2026.2.4)  13 JUN 2026 22:51
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2026.2.4)  16 JUN 2026 23:50
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1286,19 +1286,86 @@ Underfull \hbox (badness 10000) in paragraph at lines 543--545
 
  []
 
-[6] (./Statistical_inference_project.aux)
+
+Underfull \hbox (badness 10000) in paragraph at lines 592--595
+
+ []
+
+
+Overfull \vbox (0.84102pt too high) detected at line 621
+ []
+
+[6]
+Underfull \hbox (badness 10000) in paragraph at lines 670--671
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 672--673
+
+ []
+
+[7]
+File: Statistical_inference_project_files/figure-latex/histograms-1.pdf Graphic
+ file (type pdf)
+<use Statistical_inference_project_files/figure-latex/histograms-1.pdf>
+File: Statistical_inference_project_files/figure-latex/histograms-2.pdf Graphic
+ file (type pdf)
+<use Statistical_inference_project_files/figure-latex/histograms-2.pdf>
+[8]
+File: Statistical_inference_project_files/figure-latex/histograms-3.pdf Graphic
+ file (type pdf)
+<use Statistical_inference_project_files/figure-latex/histograms-3.pdf>
+[9]
+File: Statistical_inference_project_files/figure-latex/histograms-4.pdf Graphic
+ file (type pdf)
+<use Statistical_inference_project_files/figure-latex/histograms-4.pdf>
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(1)/m/n' will be
+(Font)              scaled to size 7.0pt on input line 728.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(2)/m/n' will be
+(Font)              scaled to size 10.00092pt on input line 728.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(2)/m/n' will be
+(Font)              scaled to size 7.00064pt on input line 728.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
+(Font)              scaled to size 9.99893pt on input line 728.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
+(Font)              scaled to size 6.99925pt on input line 728.
+
+Underfull \hbox (badness 10000) in paragraph at lines 726--729
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 730--731
+
+ []
+
+File: Statistical_inference_project_files/figure-latex/Boxplots-1.pdf Graphic f
+ile (type pdf)
+<use Statistical_inference_project_files/figure-latex/Boxplots-1.pdf>
+[10]
+Underfull \hbox (badness 10000) in paragraph at lines 746--747
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 748--749
+
+ []
+
+[11] (./Statistical_inference_project.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 21991 strings out of 468174
- 399142 string characters out of 5436828
- 1014621 words of memory out of 5000000
- 50404 multiletter control sequences out of 15000+600000
- 632376 words of font info for 79 fonts, out of 8000000 for 9000
+ 22075 strings out of 468174
+ 403223 string characters out of 5436828
+ 1014623 words of memory out of 5000000
+ 50470 multiletter control sequences out of 15000+600000
+ 634254 words of font info for 91 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  90i,11n,114p,1026b,594s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on Statistical_inference_project.pdf (6 pages).
+Output written on Statistical_inference_project.pdf (11 pages).

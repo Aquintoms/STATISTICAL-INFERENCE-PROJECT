@@ -387,7 +387,7 @@ such as no country could have a GDP of zero or an entire population could have
 a BMI of zero. We did not check for the various diseases because it is possible
 for the various developed countries to have incidences where there are no
 certain diseases because of their well developed health care system which can
-also be backed by their robust immunization procedures. With regards with
+also be backed by their robust immunization procedures. With regards to
 alcohol where we obtained 38 zeros, we needed to identify if these countries
 came from the Muslim majority countries or countries under an Islamic regime
 of which according to their religious views, consumption of alcohol is
@@ -542,5 +542,209 @@ developing countries and there are \texttt{592} records from developed countries
 
 We now proceeded to see if the high vaccination coverage came from developed or
 developing countries.\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Comparing the coverage between the two economy statuses}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Average coverage: Developing (0) vs Developed (1) }\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Average coverage: Developing (0) vs Developed (1)
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{aggregate}\NormalTok{(}\FunctionTok{cbind}\NormalTok{(Measles, Polio, Diphtheria) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Economy\_status\_Developed, }\AttributeTok{data =}\NormalTok{ df, }\AttributeTok{FUN =}\NormalTok{ mean, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   Economy_status_Developed  Measles    Polio Diphtheria
+## 1                        0 74.50044 84.31954   83.97711
+## 2                        1 88.26182 94.86655   95.07770
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Checking which economy status holds 0\% coverage record for measles}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Economy status for countries with 0\% Measles coverage }\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Economy status for countries with 0% Measles coverage
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{table}\NormalTok{(}\AttributeTok{Measles\_zero =}\NormalTok{ df}\SpecialCharTok{$}\NormalTok{Measles }\SpecialCharTok{==} \DecValTok{0}\NormalTok{, }\AttributeTok{Developed =}\NormalTok{ df}\SpecialCharTok{$}\NormalTok{Economy\_status\_Developed)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##             Developed
+## Measles_zero    0    1
+##        FALSE 2272  592
+\end{verbatim}
+
+We saw that developed countries had a better coverage of vaccination as compared to developing countries. For instance, Measles had a 88.26\% coverage in developed countries while it had a 74.5\% coverage in the developing countries. This trend was seen in Polio and Diphtheria.\\
+The table also showed that there was no instance of any country where it had a 0\% coverage of Measles. Every single row returned \texttt{FALSE} thus proving coverage across all countries.\\
+We then proceeded to conduct descriptive statistics.\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Isolating the numeric columns as well as omitting variables which}
+\CommentTok{\# would be less meaningful to have summary statistics}
+\NormalTok{cols\_to\_exclude }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Year"}\NormalTok{, }\StringTok{"Economy\_status\_Developed"}\NormalTok{, }\StringTok{"Economy\_status\_Developing"}\NormalTok{)}
+\NormalTok{num\_df }\OtherTok{\textless{}{-}}\NormalTok{ df[ , }\FunctionTok{sapply}\NormalTok{(df, is.numeric)]}
+\NormalTok{num\_df }\OtherTok{\textless{}{-}}\NormalTok{ num\_df [, }\SpecialCharTok{!}\NormalTok{(}\FunctionTok{names}\NormalTok{(num\_df) }\SpecialCharTok{\%in\%}\NormalTok{ cols\_to\_exclude)]}
+
+\CommentTok{\# Calculating the statistics}
+\NormalTok{stats }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(x) \{}
+\NormalTok{  x }\OtherTok{\textless{}{-}} \FunctionTok{na.omit}\NormalTok{(x)}
+  \FunctionTok{c}\NormalTok{(}
+    \AttributeTok{Mean =} \FunctionTok{mean}\NormalTok{(x),}
+    \AttributeTok{Median =} \FunctionTok{median}\NormalTok{(x),}
+    \AttributeTok{Variance =} \FunctionTok{var}\NormalTok{(x),}
+    \AttributeTok{SD =} \FunctionTok{sd}\NormalTok{(x),}
+    \AttributeTok{Range =} \FunctionTok{max}\NormalTok{(x) }\SpecialCharTok{{-}} \FunctionTok{min}\NormalTok{(x),}
+    \AttributeTok{IQR =} \FunctionTok{IQR}\NormalTok{(x)}
+\NormalTok{  )}
+\NormalTok{\}}
+
+\NormalTok{stats\_table }\OtherTok{\textless{}{-}} \FunctionTok{t}\NormalTok{(}\FunctionTok{sapply}\NormalTok{ (num\_df, stats))}
+
+\FunctionTok{cat}\NormalTok{ (}\StringTok{"Descriptive statistics }\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Descriptive statistics
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{round}\NormalTok{(stats\_table, }\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                                 Mean  Median     Variance       SD     Range
+## Infant_deaths                  30.36   19.60       758.35    27.54    136.30
+## Under_five_deaths              42.94   23.10      1986.48    44.57    222.60
+## Adult_mortality               192.25  163.84     13204.37   114.91    669.98
+## Alcohol_consumption             4.82    4.02        15.86     3.98     17.87
+## Hepatitis_B                    84.29   89.00       255.86    16.00     87.00
+## Measles                        77.34   83.00       348.18    18.66     89.00
+## BMI                            25.03   25.50         4.81     2.19     12.30
+## Polio                          86.50   93.00       227.42    15.08     91.00
+## Diphtheria                     86.27   93.00       241.31    15.53     83.00
+## Incidents_HIV                   0.89    0.15         5.67     2.38     21.67
+## GDP_per_capita              11540.92 4217.00 286787076.14 16934.79 112270.00
+## Population_mln                 36.68    7.85     18628.39   136.49   1379.78
+## Thinness_ten_nineteen_years     4.87    3.30        19.70     4.44     27.60
+## Thinness_five_nine_years        4.90    3.40        20.48     4.53     28.50
+## Schooling                       7.63    7.80        10.06     3.17     13.00
+## Life_expectancy                68.86   71.40        88.47     9.41     44.40
+##                                  IQR
+## Infant_deaths                  39.25
+## Under_five_deaths              56.33
+## Adult_mortality               139.88
+## Alcohol_consumption             6.58
+## Hepatitis_B                    18.00
+## Measles                        29.00
+## BMI                             3.20
+## Polio                          16.00
+## Diphtheria                     16.00
+## Incidents_HIV                   0.38
+## GDP_per_capita              11141.25
+## Population_mln                 21.59
+## Thinness_ten_nineteen_years     5.60
+## Thinness_five_nine_years        5.70
+## Schooling                       5.20
+## Life_expectancy                12.70
+\end{verbatim}
+
+From the summary statistics above, we saw no major outliers or anomalies that would have warranted an immediate action. Although, there was possible skewness \texttt{GDP\_per\_capita} whereby it had a median of \emph{4217.00} and a mean of \emph{11540.92}. A group of high income individuals would cause this. Such trends were also witnessed in \texttt{Population\_mln} and \texttt{Incidents\_HIV}, where the former could be explained by countries having a high population. With that, we proceeded to generate visualizations which would help us see missed information.\\
+
+We began by histograms:\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Life Expectancy}
+\FunctionTok{hist}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{Life\_expectancy,}
+     \AttributeTok{main =} \StringTok{"Distribution of Life Expectancy"}\NormalTok{,}
+     \AttributeTok{xlab =} \StringTok{"Age (Years)"}\NormalTok{,}
+     \AttributeTok{col =} \StringTok{"skyblue"}\NormalTok{,}
+     \AttributeTok{border =} \StringTok{"white"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{Statistical_inference_project_files/figure-latex/histograms-1.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# GDP Per Capita}
+\FunctionTok{hist}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{GDP\_per\_capita,}
+     \AttributeTok{main =} \StringTok{"Distribution of GDP per capita"}\NormalTok{,}
+     \AttributeTok{xlab =} \StringTok{"GDP ($)"}\NormalTok{,}
+     \AttributeTok{col =} \StringTok{"salmon"}\NormalTok{,}
+     \AttributeTok{border =} \StringTok{"white"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{Statistical_inference_project_files/figure-latex/histograms-2.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Population in Million}
+\FunctionTok{hist}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{Population\_mln,}
+     \AttributeTok{main =} \StringTok{"Distribution of Population in millions"}\NormalTok{,}
+     \AttributeTok{xlab =} \StringTok{"Poppulation in Millions"}\NormalTok{,}
+     \AttributeTok{col =} \StringTok{"orange"}\NormalTok{,}
+     \AttributeTok{border =} \StringTok{"white"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{Statistical_inference_project_files/figure-latex/histograms-3.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Incidents in HIV}
+\FunctionTok{hist}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{Incidents\_HIV,}
+     \AttributeTok{main =} \StringTok{"Distribution of HIV Incidents"}\NormalTok{,}
+     \AttributeTok{xlab =} \StringTok{"HIV incidents"}\NormalTok{,}
+     \AttributeTok{col =} \StringTok{"red"}\NormalTok{,}
+     \AttributeTok{border =} \StringTok{"white"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{Statistical_inference_project_files/figure-latex/histograms-4.pdf}}
+
+As previously explained by the numbers, the histograms revealed that the \texttt{GDP\_per\_capita}, \texttt{Population\_mln}
+and \texttt{Incidents\_HIV} were positively skewed.\\
+The \texttt{Life\_Expectancy} histogram was negatively skewed as expected, peaking at the \(\approx 75\) age mark.\\
+
+We proceeded to construct boxplots.\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Life expectancy with economy status developed}
+\FunctionTok{boxplot}\NormalTok{(Life\_expectancy }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Economy\_status\_Developed,}
+        \AttributeTok{data =}\NormalTok{ df,}
+        \AttributeTok{main =} \StringTok{"The Life expectancy by Economic tier"}\NormalTok{,}
+        \AttributeTok{xlab =} \StringTok{"Economy Status (0 = Developing, 1 = Developed"}\NormalTok{,}
+        \AttributeTok{ylab =} \StringTok{"Life Expectancy in Years"}\NormalTok{,}
+        \AttributeTok{col =} \FunctionTok{c}\NormalTok{(}\StringTok{"lightpink"}\NormalTok{, }\StringTok{"lightgreen"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{Statistical_inference_project_files/figure-latex/Boxplots-1.pdf}}
+
+From the boxplot, we saw that developed countries have a higher life expectancy than developing countries. This can as well be backed up by the vaccination coverage we identified previously. Developed countries have a higher coverage than developing countries.\\
+
+We proceeded to construct a scatterplot.\\
 
 \end{document}

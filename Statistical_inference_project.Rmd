@@ -94,7 +94,7 @@ such as no country could have a GDP of zero or an entire population could have
 a BMI of zero. We did not check for the various diseases because it is possible 
 for the various developed countries to have incidences where there are no 
 certain diseases because of their well developed health care system which can
-also be backed by their robust immunization procedures. With regards with
+also be backed by their robust immunization procedures. With regards to
 alcohol where we obtained 38 zeros, we needed to identify if these countries 
 came from the Muslim majority countries or countries under an Islamic regime 
 of which according to their religious views, consumption of alcohol is
@@ -167,7 +167,99 @@ We now proceeded to see if the high vaccination coverage came from developed or
 developing countries.\
 
 ```{r vaccination by economy, echo=TRUE}
+# Comparing the coverage between the two economy statuses
+cat("Average coverage: Developing (0) vs Developed (1) \n")
+aggregate(cbind(Measles, Polio, Diphtheria) ~ Economy_status_Developed, data = df, FUN = mean, na.rm = TRUE)
 
+# Checking which economy status holds 0% coverage record for measles
+cat("Economy status for countries with 0% Measles coverage \n")
+table(Measles_zero = df$Measles == 0, Developed = df$Economy_status_Developed)
 
 ```
+We saw that developed countries had a better coverage of vaccination as compared to developing countries. For instance, Measles had a 88.26\% coverage in developed countries while it had a 74.5\% coverage in the developing countries. This trend was seen in Polio and Diphtheria.\
+The table also showed that there was no instance of any country where it had a 0\% coverage of Measles. Every single row returned `FALSE` thus proving coverage across all countries.\
+We then proceeded to conduct descriptive statistics.\
+
+```{r Descriptive statistics, echo = TRUE}
+# Isolating the numeric columns as well as omitting variables which
+# would be less meaningful to have summary statistics
+cols_to_exclude <- c("Year", "Economy_status_Developed", "Economy_status_Developing")
+num_df <- df[ , sapply(df, is.numeric)]
+num_df <- num_df [, !(names(num_df) %in% cols_to_exclude)]
+
+# Calculating the statistics
+stats <- function(x) {
+  x <- na.omit(x)
+  c(
+    Mean = mean(x),
+    Median = median(x),
+    Variance = var(x),
+    SD = sd(x),
+    Range = max(x) - min(x),
+    IQR = IQR(x)
+  )
+}
+
+stats_table <- t(sapply (num_df, stats))
+
+cat ("Descriptive statistics \n")
+round(stats_table, 2)
+  
+```
+From the summary statistics above, we saw no major outliers or anomalies that would have warranted an immediate action. Although, there was possible skewness `GDP_per_capita` whereby it had a median of *4217.00* and a mean of *11540.92*. A group of high income individuals would cause this. Such trends were also witnessed in `Population_mln` and `Incidents_HIV`, where the former could be explained by countries having a high population. With that, we proceeded to generate visualizations which would help us see missed information.\
+
+We began by histograms:\
+
+```{r histograms, echo =TRUE}
+# Life Expectancy
+hist(df$Life_expectancy,
+     main = "Distribution of Life Expectancy",
+     xlab = "Age (Years)",
+     col = "skyblue",
+     border = "white")
+
+# GDP Per Capita
+hist(df$GDP_per_capita,
+     main = "Distribution of GDP per capita",
+     xlab = "GDP ($)",
+     col = "salmon",
+     border = "white")
+
+# Population in Million
+hist(df$Population_mln,
+     main = "Distribution of Population in millions",
+     xlab = "Poppulation in Millions",
+     col = "orange",
+     border = "white")
+
+# Incidents in HIV
+hist(df$Incidents_HIV,
+     main = "Distribution of HIV Incidents",
+     xlab = "HIV incidents",
+     col = "red",
+     border = "white")
+```
+
+As previously explained by the numbers, the histograms revealed that the `GDP_per_capita`, `Population_mln`
+and `Incidents_HIV` were positively skewed.\
+The `Life_Expectancy` histogram was negatively skewed as expected, peaking at the $\approx 75$ age mark.\
+
+We proceeded to construct boxplots.\
+
+```{r Boxplots, echo=TRUE}
+# Life expectancy with economy status developed
+boxplot(Life_expectancy ~ Economy_status_Developed,
+        data = df,
+        main = "The Life expectancy by Economic tier",
+        xlab = "Economy Status (0 = Developing, 1 = Developed",
+        ylab = "Life Expectancy in Years",
+        col = c("lightpink", "lightgreen"))
+
+```
+
+From the boxplot, we saw that developed countries have a higher life expectancy than developing countries. This can as well be backed up by the vaccination coverage we identified previously. Developed countries have a higher coverage than developing countries.\
+
+We proceeded to construct a scatterplot.\
+
+
 
