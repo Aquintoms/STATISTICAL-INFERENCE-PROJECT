@@ -297,7 +297,7 @@ We also saw evidence of multicollinearity amongst certain variables such as `Pol
 
 We proceeded to address the distributional assumptions. We selected 3 variables for this. We picked `Life_expectancy` as it was our dependent variable. Previously, we had observed that `GDP_per_capita` was skewed. This was also selected to see how it violated normality. We also selected a more symmetric variable which was `schooling` to serve as a comparison metric to the skewed variable.\
 
-```{r Lifeexpassumptions, echo=TRUE, dev='png'}
+```{r Lifeexpassumptions, echo=TRUE, dev='png', dpi=300}
 # Density plot + Histogram (Saved as p1)
 p1 <- ggplot(df, aes(x = Life_expectancy)) +
   geom_histogram(aes(y = after_stat(density)), bins = 30, fill = "skyblue", color = "white") +
@@ -320,7 +320,7 @@ The Histogram & Density plots showed that the life expectancy was negatively ske
 Finally the shapiro-wilk test had a very low p-value thus indicating that normality is indeed violated. This would warrant a transformation before formally engaging in the various tests.\
 The next assessment was on the `GDP_per_capita`.\
 
-```{r GDPassumptions, echo=TRUE, dev='png'}
+```{r GDPassumptions, echo=TRUE, dev='png', dpi=300}
 # Density plot + Histogram
 p1 <- ggplot(df, aes(x = GDP_per_capita)) +
   geom_histogram(aes(y = after_stat(density)), bins = 30, fill = "salmon", color = "white") +
@@ -342,7 +342,7 @@ shapiro.test(df$GDP_per_capita)
 From the histogram and density plot, the `GDP_per_capita` was positively skewed. This was also evidenced by the QQ Plot which had much heavy tails as the points did not lie on the red line. The shapiro-wilk test gave a p-value close to zero indicative of the violation of normality.\
 We finally plotted for `schooling` variable.\
 
-```{r Schoolingassumptions, echo = TRUE, dev='png'}
+```{r Schoolfinal, echo = TRUE, dev='png', dpi=300}
 # Histogram and Density Plot
 p1 <- ggplot(df, aes(x = Schooling)) +
   geom_histogram(aes(y = after_stat(density)), bins = 30, fill = "lightgreen", color ="white") +

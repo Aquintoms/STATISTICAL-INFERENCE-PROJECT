@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2026.2.4)  19 JUN 2026 00:56
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2026.2.4)  19 JUN 2026 01:04
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -830,8 +830,7 @@ File: bkm-dvipdfm.def 2023-12-10 v1.31 bookmark driver for dvipdfm (HO)
 \BKM@id=\count374
 )) (c:/texlive/2025/texmf-dist/tex/latex/xurl/xurl.sty
 Package: xurl 2022/01/09 v 0.10 modify URL breaks
-)
-No file Statistical_inference_project.aux.
+) (./Statistical_inference_project.aux)
 \openout1 = `Statistical_inference_project.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 132.
@@ -1169,9 +1168,6 @@ File: mt-LatinModernRoman.cfg 2021/02/21 v1.1 microtype config. file: Latin Mod
 ern Roman (RS)
 )
 Package hyperref Info: Link coloring OFF on input line 132.
-
-Package hyperref Warning: Rerun to get /PageLabels entry.
-
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(1)/m/n' will be
 (Font)              scaled to size 12.0pt on input line 134.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(1)/m/n' will be
@@ -1384,26 +1380,22 @@ Underfull \hbox (badness 10000) in paragraph at lines 911--917
  []
 
 [16]
-
-LaTeX Warning: File `Statistical_inference_project_files/figure-latex/Schooling
-assumptions-1.png' not found on input line 936.
-
-! Unable to load picture or PDF file 'Statistical_inference_project_files/figur
-e-latex/Schoolingassumptions-1.png'.
-<to be read again> 
-                   }
-l.936 ...figure-latex/Schoolingassumptions-1.png}}
-                                                  
-The requested image couldn't be read because
-it was not a recognized image format.
-
- 
+File: Statistical_inference_project_files/figure-latex/Schoolfinal-1.png Graphi
+c file (type bmp)
+<Statistical_inference_project_files/figure-latex/Schoolfinal-1.png>
+[17] (./Statistical_inference_project.aux)
+ ***********
+LaTeX2e <2025-11-01>
+L3 programming layer <2026-01-19>
+ ***********
+ ) 
 Here is how much of TeX's memory you used:
- 21953 strings out of 468174
- 405803 string characters out of 5436828
- 1011359 words of memory out of 5000000
- 50353 multiletter control sequences out of 15000+600000
+ 21920 strings out of 468174
+ 402558 string characters out of 5436828
+ 1011371 words of memory out of 5000000
+ 50316 multiletter control sequences out of 15000+600000
  634254 words of font info for 91 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  90i,11n,114p,1026b,588s stack positions out of 10000i,1000n,20000p,200000b,200000s
-Output written on Statistical_inference_project.pdf (16 pages).
+
+Output written on Statistical_inference_project.pdf (17 pages).
