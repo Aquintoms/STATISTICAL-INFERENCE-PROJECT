@@ -7,7 +7,7 @@
 \usepackage{xcolor}
 \usepackage[left=2cm, right=2cm, top=2cm, bottom=2cm]{geometry}
 \usepackage{amsmath,amssymb}
-\setcounter{secnumdepth}{5}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
 \usepackage{iftex}
 \ifPDFTeX
   \usepackage[T1]{fontenc}
@@ -78,17 +78,6 @@
 \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
 \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\usepackage{longtable,booktabs,array}
-\newcounter{none} % for unnumbered tables
-\usepackage{calc} % for calculating minipage widths
-% Correct order of tables after \paragraph or \subparagraph
-\usepackage{etoolbox}
-\makeatletter
-\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
-\makeatother
-% Allow footnotes in longtable head/foot
-\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
-\makesavenoteenv{longtable}
 \usepackage{graphicx}
 \makeatletter
 \newsavebox\pandoc@box
@@ -131,12 +120,13 @@
 \urlstyle{same}
 \hypersetup{
   pdftitle={Statistical Inference on Global Health Data: A comprehensive analysis of the WHO Life Expectancy Dataset},
-  pdfauthor={Wesley M. Gathua \textbar{} Reg No: 223347},
+  pdfauthor={Wesley M. Gathua \textbar{} Reg: 223347},
   hidelinks,
   pdfcreator={LaTeX via pandoc}}
 
-\title{Statistical Inference on Global Health Data: A comprehensive analysis of the WHO Life Expectancy Dataset}
-\author{Wesley M. Gathua \textbar{} Reg No: 223347}
+\title{Statistical Inference on Global Health Data: A comprehensive
+analysis of the WHO Life Expectancy Dataset}
+\author{Wesley M. Gathua \textbar{} Reg: 223347}
 \date{2026-06-19}
 
 \begin{document}
@@ -144,7 +134,8 @@
 
 \newpage
 
-The dataset was loaded successfully. We proceeded to do some checks onto the dataset.\\
+The dataset was loaded successfully. We proceeded to do some checks onto
+the dataset.\\
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -243,7 +234,8 @@ The dataset was loaded successfully. We proceeded to do some checks onto the dat
 \end{verbatim}
 
 We saw that there 2864 rows and 21 columns in the dataset.\\
-There were no missing values in all the variables. In order to be sure, we also proceeded to check if there were rows labeled `null'.
+There were no missing values in all the variables. In order to be sure,
+we also proceeded to check if there were rows labeled `null'.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -379,18 +371,19 @@ There were no missing values in all the variables. In order to be sure, we also 
 ## Zeros in incidents in HIV: 0
 \end{verbatim}
 
-It was seen that there were no masked values as ``null'', `null' or an empty
-string.\\
-Upon investigating the zeros, there was no suspicious activity of zeros. The
-selected columns for this check were guided by real world scenarios. This is
-such as no country could have a GDP of zero or an entire population could have
-a BMI of zero. We did not check for the various diseases because it is possible
-for the various developed countries to have incidences where there are no
-certain diseases because of their well developed health care system which can
-also be backed by their robust immunization procedures. With regards to
-alcohol where we obtained 38 zeros, we needed to identify if these countries
-came from the Muslim majority countries or countries under an Islamic regime
-of which according to their religious views, consumption of alcohol is
+It was seen that there were no masked values as ``null'', `null' or an
+empty string.\\
+Upon investigating the zeros, there was no suspicious activity of zeros.
+The selected columns for this check were guided by real world scenarios.
+This is such as no country could have a GDP of zero or an entire
+population could have a BMI of zero. We did not check for the various
+diseases because it is possible for the various developed countries to
+have incidences where there are no certain diseases because of their
+well developed health care system which can also be backed by their
+robust immunization procedures. With regards to alcohol where we
+obtained 38 zeros, we needed to identify if these countries came from
+the Muslim majority countries or countries under an Islamic regime of
+which according to their religious views, consumption of alcohol is
 prohibited.\\
 
 \begin{Shaded}
@@ -405,12 +398,12 @@ prohibited.\\
 ## [6] "Afghanistan"  "Libya"
 \end{verbatim}
 
-The Muslim majority hypothesis proved to be correct as the countries with 0
-alcohol consumption came from Islamic nations.\\
+The Muslim majority hypothesis proved to be correct as the countries
+with 0 alcohol consumption came from Islamic nations.\\
 We needed to check if the highly-developed countries indeed had no
-vaccine preventable diseases. We also proceeded to investigate if presence
-of zeros meant that no immunization coverage was done or it meant that there
-were no such cases.\\
+vaccine preventable diseases. We also proceeded to investigate if
+presence of zeros meant that no immunization coverage was done or it
+meant that there were no such cases.\\
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -439,14 +432,15 @@ were no such cases.\\
 ##  Max.   :99.00   Max.   :99.0   Max.   :99.00
 \end{verbatim}
 
-An inspection of these diseases proved that there was a strict maximum threshold
-of 99. For actual cases, this value would scale to higher figures such as tens
-of thousands. This evidently proved that these values were actual percentage
-coverage rather than actual case counts.\\
-We needed to do an investigation of these percentages. This was to check whether
-the percentages meant 99\% covered or not covered. This was done by the use of
-a correlation. If it meant covered, there would be an inverse relationship
-between the disease and \texttt{Infant\_deaths} or \texttt{Under\_five\_deaths}.\\
+An inspection of these diseases proved that there was a strict maximum
+threshold of 99. For actual cases, this value would scale to higher
+figures such as tens of thousands. This evidently proved that these
+values were actual percentage coverage rather than actual case counts.\\
+We needed to do an investigation of these percentages. This was to check
+whether the percentages meant 99\% covered or not covered. This was done
+by the use of a correlation. If it meant covered, there would be an
+inverse relationship between the disease and \texttt{Infant\_deaths} or
+\texttt{Under\_five\_deaths}.\\
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -472,16 +466,18 @@ between the disease and \texttt{Infant\_deaths} or \texttt{Under\_five\_deaths}.
 ##     infants is -0.7407905
 \end{verbatim}
 
-This showed an inverse relationship between the diseases and the child mortality.
-This meant that the values exhibited by the diseases meant the extensiveness of
-the vaccinations. A 99\% coverage meant that most parts of this particular
-country was vaccinated against the specific disease.\\
+This showed an inverse relationship between the diseases and the child
+mortality. This meant that the values exhibited by the diseases meant
+the extensiveness of the vaccinations. A 99\% coverage meant that most
+parts of this particular country was vaccinated against the specific
+disease.\\
 
-The project's next step was to check if indeed the high immunization coverage
-came from the highly developed countries. This would validate our hypothesis of
-developed countries having better healthcare. We began by investigating the
-robustness of \texttt{Economy\_status\_Developing} and \texttt{Economy\_status\_Developed}
-features to ensure that they were mutually exclusive.\\
+The project's next step was to check if indeed the high immunization
+coverage came from the highly developed countries. This would validate
+our hypothesis of developed countries having better healthcare. We began
+by investigating the robustness of \texttt{Economy\_status\_Developing}
+and \texttt{Economy\_status\_Developed} features to ensure that they
+were mutually exclusive.\\
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -534,14 +530,15 @@ features to ensure that they were mutually exclusive.\\
 ##         1  592    0
 \end{verbatim}
 
-We saw that the two columns were indeed mutually exclusive as they both did not
-add up to 2. The cross validation table backs this up whereby there are no
-individual countries where they are both developed and developing. This is given by the
-\texttt{0}. Additionally, the table also informs us that there are \texttt{2272} records from
-developing countries and there are \texttt{592} records from developed countries.\\
+We saw that the two columns were indeed mutually exclusive as they both
+did not add up to 2. The cross validation table backs this up whereby
+there are no individual countries where they are both developed and
+developing. This is given by the \texttt{0}. Additionally, the table
+also informs us that there are \texttt{2272} records from developing
+countries and there are \texttt{592} records from developed countries.\\
 
-We now proceeded to see if the high vaccination coverage came from developed or
-developing countries.\\
+We now proceeded to see if the high vaccination coverage came from
+developed or developing countries.\\
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -589,8 +586,13 @@ developing countries.\\
 ##        FALSE 2272  592
 \end{verbatim}
 
-We saw that developed countries had a better coverage of vaccination as compared to developing countries. For instance, Measles had a 88.26\% coverage in developed countries while it had a 74.5\% coverage in the developing countries. This trend was seen in Polio and Diphtheria.\\
-The table also showed that there was no instance of any country where it had a 0\% coverage of Measles. Every single row returned \texttt{FALSE} thus proving coverage across all countries.\\
+We saw that developed countries had a better coverage of vaccination as
+compared to developing countries. For instance, Measles had a 88.26\%
+coverage in developed countries while it had a 74.5\% coverage in the
+developing countries. This trend was seen in Polio and Diphtheria.\\
+The table also showed that there was no instance of any country where it
+had a 0\% coverage of Measles. Every single row returned \texttt{FALSE}
+thus proving coverage across all countries.\\
 We then proceeded to conduct descriptive statistics.\\
 
 \begin{Shaded}
@@ -667,7 +669,15 @@ We then proceeded to conduct descriptive statistics.\\
 ## Life_expectancy                12.70
 \end{verbatim}
 
-From the summary statistics above, we saw no major outliers or anomalies that would have warranted an immediate action. Although, there was possible skewness \texttt{GDP\_per\_capita} whereby it had a median of \emph{4217.00} and a mean of \emph{11540.92}. A group of high income individuals would cause this. Such trends were also witnessed in \texttt{Population\_mln} and \texttt{Incidents\_HIV}, where the former could be explained by countries having a high population. With that, we proceeded to generate visualizations which would help us see missed information.\\
+From the summary statistics above, we saw no major outliers or anomalies
+that would have warranted an immediate action. Although, there was
+possible skewness \texttt{GDP\_per\_capita} whereby it had a median of
+\emph{4217.00} and a mean of \emph{11540.92}. A group of high income
+individuals would cause this. Such trends were also witnessed in
+\texttt{Population\_mln} and \texttt{Incidents\_HIV}, where the former
+could be explained by countries having a high population. With that, we
+proceeded to generate visualizations which would help us see missed
+information.\\
 
 We began by histograms:\\
 
@@ -723,9 +733,11 @@ We began by histograms:\\
 
 \pandocbounded{\includegraphics[keepaspectratio]{Statistical_inference_project_files/figure-latex/histograms-4.pdf}}
 
-As previously explained by the numbers, the histograms revealed that the \texttt{GDP\_per\_capita}, \texttt{Population\_mln}
-and \texttt{Incidents\_HIV} were positively skewed.\\
-The \texttt{Life\_Expectancy} histogram was negatively skewed as expected, peaking at the \(\approx 75\) age mark.\\
+As previously explained by the numbers, the histograms revealed that the
+\texttt{GDP\_per\_capita}, \texttt{Population\_mln} and
+\texttt{Incidents\_HIV} were positively skewed.\\
+The \texttt{Life\_Expectancy} histogram was negatively skewed as
+expected, peaking at the \(\approx 75\) age mark.\\
 
 We proceeded to construct boxplots.\\
 
@@ -743,8 +755,204 @@ We proceeded to construct boxplots.\\
 
 \pandocbounded{\includegraphics[keepaspectratio]{Statistical_inference_project_files/figure-latex/Boxplots-1.pdf}}
 
-From the boxplot, we saw that developed countries have a higher life expectancy than developing countries. This can as well be backed up by the vaccination coverage we identified previously. Developed countries have a higher coverage than developing countries.\\
+From the boxplot, we saw that developed countries have a higher life
+expectancy than developing countries. This can as well be backed up by
+the vaccination coverage we identified previously. Developed countries
+have a higher coverage than developing countries.\\
 
-We proceeded to construct a scatterplot.\\
+We proceeded to construct a scatterplot of \texttt{Life\_Expectancy}
+against \texttt{schooling}. We desired to visualize their
+relationship.\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Schooling, }\AttributeTok{y =}\NormalTok{ Life\_expectancy)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{color =} \StringTok{"darkblue"}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.3}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_smooth}\NormalTok{(}\AttributeTok{method =} \StringTok{"lm"}\NormalTok{, }\AttributeTok{color =} \StringTok{"red"}\NormalTok{, }\AttributeTok{se =} \ConstantTok{FALSE}\NormalTok{, }\AttributeTok{linewidth =} \FloatTok{1.2}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{"Life Expectancy vs Schooling"}\NormalTok{, }\AttributeTok{x =} \StringTok{"Schooling (Average Years)"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Life Expectancy (Years)"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{plot.title =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{face =} \StringTok{"bold"}\NormalTok{, }\AttributeTok{size =} \DecValTok{14}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{Statistical_inference_project_files/figure-latex/scatterplot-1.pdf}}
+
+From the scatterplot, we saw that there was a positive relationship
+between \texttt{Life\_expectancy} and \texttt{Schooling}. The more
+learned a country is, the higher the life expectancy. This is due to
+advanced education system yielding better research in how to make better
+health decisions as well as better standards of living.\\
+
+We proceeded to have a correlation heatmap.\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# For only numeric columns}
+\NormalTok{cor\_matrix }\OtherTok{\textless{}{-}} \FunctionTok{cor}\NormalTok{(num\_df, }\AttributeTok{use =} \StringTok{"complete.obs"}\NormalTok{)}
+
+\FunctionTok{corrplot}\NormalTok{(cor\_matrix,}
+        \AttributeTok{method =} \StringTok{"color"}\NormalTok{,}
+        \AttributeTok{type =} \StringTok{"upper"}\NormalTok{,}
+        \AttributeTok{addCoef.col =} \StringTok{"black"}\NormalTok{,}
+        \AttributeTok{number.cex =} \FloatTok{0.5}\NormalTok{,}
+        \AttributeTok{tl.col =} \StringTok{"black"}\NormalTok{,}
+        \AttributeTok{tl.cex =} \FloatTok{0.7}\NormalTok{,}
+        \AttributeTok{tl.srt =} \DecValTok{45}\NormalTok{,}
+        \AttributeTok{diag =} \ConstantTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{Statistical_inference_project_files/figure-latex/heatmap-1.pdf}}
+
+The heatmap validated the scatterplot as there there was a sufficiently
+high degree of correlation (\texttt{0.73}) between \texttt{Schooling}
+and \texttt{Life\_expectancy}. We also saw a moderate positive
+relationship between \texttt{Life\_expectancy} and
+\texttt{GDP\_per\_capita} as it was valued at \texttt{0.58}.\\
+There was a very strong negative relationship (\texttt{0.95}) between
+\texttt{Life\_expectancy} and \texttt{Adult\_mortality}. This inverse
+relationship can be explained as the life expectancy increases, it
+results to a decrease in the rates of adult mortality.\\
+We also saw evidence of multicollinearity amongst certain variables such
+as \texttt{Polio} and \texttt{Diphtheria}, \texttt{Infant\_deaths} and
+\texttt{Under\_five\_deaths}, and
+\texttt{Thinness\_ten\_nineteen\_years} and
+\texttt{Thinness\_five\_nine\_years}. These variables almost had a
+perfect relationship. Subsequent steps would handle this to prevent our
+tests from crushing.\\
+
+We proceeded to address the distributional assumptions. We selected 3
+variables for this. We picked \texttt{Life\_expectancy} as it was our
+dependent variable. Previously, we had observed that
+\texttt{GDP\_per\_capita} was skewed. This was also selected to see how
+it violated normality. We also selected a more symmetric variable which
+was \texttt{schooling} to serve as a comparison metric to the skewed
+variable.\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Density plot + Histogram (Saved as p1)}
+\NormalTok{p1 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Life\_expectancy)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_histogram}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =} \FunctionTok{after\_stat}\NormalTok{(density)), }\AttributeTok{bins =} \DecValTok{30}\NormalTok{, }\AttributeTok{fill =} \StringTok{"skyblue"}\NormalTok{, }\AttributeTok{color =} \StringTok{"white"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_density}\NormalTok{(}\AttributeTok{color =} \StringTok{"darkblue"}\NormalTok{, }\AttributeTok{linewidth =} \DecValTok{1}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{"Distribution: Life Expectancy"}\NormalTok{, }\AttributeTok{x =} \StringTok{"Years"}\NormalTok{)}
+
+\CommentTok{\# QQ Plot (Saved as p2)}
+\NormalTok{p2 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{sample =}\NormalTok{ Life\_expectancy)) }\SpecialCharTok{+}
+  \FunctionTok{stat\_qq}\NormalTok{() }\SpecialCharTok{+} \FunctionTok{stat\_qq\_line}\NormalTok{(}\AttributeTok{color =} \StringTok{"red"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{"QQ Plot: Life Expectancy"}\NormalTok{)}
+
+\CommentTok{\# Combine plots side{-}by{-}side using patchwork}
+\NormalTok{p1 }\SpecialCharTok{+}\NormalTok{ p2}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{Statistical_inference_project_files/figure-latex/Lifeexpassumptions-1.png}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Shapiro{-}Wilk}
+\FunctionTok{shapiro.test}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{Life\_expectancy)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  df$Life_expectancy
+## W = 0.93497, p-value < 2.2e-16
+\end{verbatim}
+
+The Histogram \& Density plots showed that the life expectancy was
+negatively skewed with a peak at the \(\approx 75\) mark. The QQ Plot
+visualized the violation of normality as the plot had a heavy tail,
+deviating from the red line. Finally the shapiro-wilk test had a very
+low p-value thus indicating that normality is indeed violated. This
+would warrant a transformation before formally engaging in the various
+tests.\\
+The next assessment was on the \texttt{GDP\_per\_capita}.\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Density plot + Histogram}
+\NormalTok{p1 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ GDP\_per\_capita)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_histogram}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =} \FunctionTok{after\_stat}\NormalTok{(density)), }\AttributeTok{bins =} \DecValTok{30}\NormalTok{, }\AttributeTok{fill =} \StringTok{"salmon"}\NormalTok{, }\AttributeTok{color =} \StringTok{"white"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_density}\NormalTok{(}\AttributeTok{color =} \StringTok{"darkred"}\NormalTok{, }\AttributeTok{linewidth =} \DecValTok{1}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{"Distribution: GDP Per Captita"}\NormalTok{, }\AttributeTok{x =} \StringTok{"GDP ($)"}\NormalTok{)}
+
+\CommentTok{\# QQ Plot}
+\NormalTok{p2 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{sample =}\NormalTok{ GDP\_per\_capita)) }\SpecialCharTok{+}
+  \FunctionTok{stat\_qq}\NormalTok{() }\SpecialCharTok{+} \FunctionTok{stat\_qq\_line}\NormalTok{(}\AttributeTok{color =} \StringTok{"red"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{"QQ Plot: GDP Per Capita"}\NormalTok{)}
+
+\CommentTok{\# Combine plots}
+\NormalTok{p1 }\SpecialCharTok{+}\NormalTok{ p2}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{Statistical_inference_project_files/figure-latex/GDPassumptions-1.png}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Shapiro{-}Wilk}
+\FunctionTok{shapiro.test}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{GDP\_per\_capita)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  df$GDP_per_capita
+## W = 0.67054, p-value < 2.2e-16
+\end{verbatim}
+
+From the histogram and density plot, the \texttt{GDP\_per\_capita} was
+positively skewed. This was also evidenced by the QQ Plot which had much
+heavy tails as the points did not lie on the red line. The shapiro-wilk
+test gave a p-value close to zero indicative of the violation of
+normality.\\
+We finally plotted for \texttt{schooling} variable.\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Histogram and Density Plot}
+\NormalTok{p1 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Schooling)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_histogram}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =} \FunctionTok{after\_stat}\NormalTok{(density)), }\AttributeTok{bins =} \DecValTok{30}\NormalTok{, }\AttributeTok{fill =} \StringTok{"lightgreen"}\NormalTok{, }\AttributeTok{color =}\StringTok{"white"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_density}\NormalTok{(}\AttributeTok{color =} \StringTok{"darkgreen"}\NormalTok{, }\AttributeTok{linewidth =} \DecValTok{1}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{"Distribution: Schooling"}\NormalTok{, }\AttributeTok{x =} \StringTok{"Years of schooling"}\NormalTok{)}
+
+\CommentTok{\# QQ Plot}
+\NormalTok{p2 }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{sample =}\NormalTok{ Schooling)) }\SpecialCharTok{+}
+  \FunctionTok{stat\_qq}\NormalTok{() }\SpecialCharTok{+} \FunctionTok{stat\_qq\_line}\NormalTok{(}\AttributeTok{color =} \StringTok{"red"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{"QQ Plot: Schooling"}\NormalTok{)}
+
+\CommentTok{\# Combine plots}
+\NormalTok{p1 }\SpecialCharTok{+}\NormalTok{ p2}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{Statistical_inference_project_files/figure-latex/Schoolingassumptions-1.png}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Shapiro Wilk}
+\FunctionTok{shapiro.test}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{Schooling)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  df$Schooling
+## W = 0.96809, p-value < 2.2e-16
+\end{verbatim}
+
+From the Histogram \& Density plot, the plot appeared to follow a
+uniform distribution. The QQ Plot showed the violation of normality as
+the plot had heavy tails and the Shapiro Wilk test had p-values close to
+zero, proving mathematically that normality was indeed in violation.
 
 \end{document}

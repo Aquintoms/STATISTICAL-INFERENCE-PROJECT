@@ -1,30 +1,31 @@
 ---
 title: 'Statistical Inference on Global Health Data: A comprehensive analysis of the WHO Life Expectancy Dataset'
-author: 'Wesley M. Gathua | Reg No: 223347'
+author: 'Wesley M. Gathua | Reg: 223347'
 date: "2026-06-19"
 output:
-  bookdown::pdf_document2:
+  pdf_document:
     latex_engine: xelatex
-    extra_dependencies:
-    - longtable
-    - fvextra
+    extra_dependencies: ["longtable", "fvextra"]
     keep_tex: true
-    toc: false
 fontsize: 10pt
-#bibliography: references.bib
-#csl: apa.csl
 header-includes:
-- \usepackage{microtype}
-- \usepackage{fvextra}
-- \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
-- \sloppy
-geometry: left=2cm, right=2cm, top=2cm, bottom=2cm
+  - \usepackage{microtype}
+  - \usepackage{fvextra}
+  - \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+  - \sloppy
+geometry: "left=2cm, right=2cm, top=2cm, bottom=2cm"
 ---
 
 \newpage
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(
+  echo = TRUE, 
+  warning = FALSE, 
+  message = FALSE,
+  cache = FALSE,      # This forces R to run EVERY chunk from scratch
+  crop = NULL
+)
 
 required_pkgs <- c("ggplot2", "corrplot", "patchwork", "kableExtra", "broom", "stargazer")
 
@@ -259,7 +260,108 @@ boxplot(Life_expectancy ~ Economy_status_Developed,
 
 From the boxplot, we saw that developed countries have a higher life expectancy than developing countries. This can as well be backed up by the vaccination coverage we identified previously. Developed countries have a higher coverage than developing countries.\
 
-We proceeded to construct a scatterplot.\
+We proceeded to construct a scatterplot of `Life_Expectancy` against `schooling`. We desired to visualize their relationship.\
+
+```{r scatterplot, echo=TRUE}
+ggplot(df, aes(x = Schooling, y = Life_expectancy)) +
+  geom_point(color = "darkblue", alpha = 0.3) +
+  geom_smooth(method = "lm", color = "red", se = FALSE, linewidth = 1.2) +
+  labs(title = "Life Expectancy vs Schooling", x = "Schooling (Average Years)", y = "Life Expectancy (Years)") +
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold", size = 14))
+```
+
+From the scatterplot, we saw that there was a positive relationship between `Life_expectancy` and `Schooling`. The more learned a country is, the higher the life expectancy. This is due to advanced education system yielding better research in how to make better health decisions as well as better standards of living.\
+
+We proceeded to have a correlation heatmap.\
+
+```{r heatmap, echo=TRUE, fig.width=10, fig.height = 10}
+# For only numeric columns
+cor_matrix <- cor(num_df, use = "complete.obs")
+
+corrplot(cor_matrix,
+        method = "color",
+        type = "upper",
+        addCoef.col = "black",
+        number.cex = 0.5,
+        tl.col = "black",
+        tl.cex = 0.7,
+        tl.srt = 45,
+        diag = FALSE)
+
+```
+
+The heatmap validated the scatterplot as there there was a sufficiently high degree of correlation (`0.73`) between `Schooling` and `Life_expectancy`. We also saw a moderate positive relationship between `Life_expectancy` and `GDP_per_capita` as it was valued at `0.58`.\
+There was a very strong negative relationship (`0.95`) between `Life_expectancy` and `Adult_mortality`. This inverse relationship can be explained as the life expectancy increases, it results to a decrease in the rates of adult mortality.\
+We also saw evidence of multicollinearity amongst certain variables such as `Polio` and  `Diphtheria`, `Infant_deaths` and `Under_five_deaths`, and `Thinness_ten_nineteen_years` and `Thinness_five_nine_years`. These variables almost had a perfect relationship. Subsequent steps would handle this to prevent our tests from crushing.\
+
+We proceeded to address the distributional assumptions. We selected 3 variables for this. We picked `Life_expectancy` as it was our dependent variable. Previously, we had observed that `GDP_per_capita` was skewed. This was also selected to see how it violated normality. We also selected a more symmetric variable which was `schooling` to serve as a comparison metric to the skewed variable.\
+
+```{r Lifeexpassumptions, echo=TRUE, dev='png'}
+# Density plot + Histogram (Saved as p1)
+p1 <- ggplot(df, aes(x = Life_expectancy)) +
+  geom_histogram(aes(y = after_stat(density)), bins = 30, fill = "skyblue", color = "white") +
+  geom_density(color = "darkblue", linewidth = 1) +
+  labs(title = "Distribution: Life Expectancy", x = "Years")
+
+# QQ Plot (Saved as p2)
+p2 <- ggplot(df, aes(sample = Life_expectancy)) +
+  stat_qq() + stat_qq_line(color = "red") +
+  labs(title = "QQ Plot: Life Expectancy")
+
+# Combine plots side-by-side using patchwork
+p1 + p2
+
+# Shapiro-Wilk
+shapiro.test(df$Life_expectancy)
+
+```
+The Histogram & Density plots showed that the life expectancy was negatively skewed with a peak at the $\approx 75$ mark. The QQ Plot visualized the violation of normality as the plot had a heavy tail, deviating from the red line.
+Finally the shapiro-wilk test had a very low p-value thus indicating that normality is indeed violated. This would warrant a transformation before formally engaging in the various tests.\
+The next assessment was on the `GDP_per_capita`.\
+
+```{r GDPassumptions, echo=TRUE, dev='png'}
+# Density plot + Histogram
+p1 <- ggplot(df, aes(x = GDP_per_capita)) +
+  geom_histogram(aes(y = after_stat(density)), bins = 30, fill = "salmon", color = "white") +
+  geom_density(color = "darkred", linewidth = 1) +
+  labs(title = "Distribution: GDP Per Captita", x = "GDP ($)")
+
+# QQ Plot
+p2 <- ggplot(df, aes(sample = GDP_per_capita)) +
+  stat_qq() + stat_qq_line(color = "red") +
+  labs(title = "QQ Plot: GDP Per Capita")
+
+# Combine plots
+p1 + p2
+
+# Shapiro-Wilk
+shapiro.test(df$GDP_per_capita)
+                   
+```
+From the histogram and density plot, the `GDP_per_capita` was positively skewed. This was also evidenced by the QQ Plot which had much heavy tails as the points did not lie on the red line. The shapiro-wilk test gave a p-value close to zero indicative of the violation of normality.\
+We finally plotted for `schooling` variable.\
+
+```{r Schoolingassumptions, echo = TRUE, dev='png'}
+# Histogram and Density Plot
+p1 <- ggplot(df, aes(x = Schooling)) +
+  geom_histogram(aes(y = after_stat(density)), bins = 30, fill = "lightgreen", color ="white") +
+  geom_density(color = "darkgreen", linewidth = 1) +
+  labs(title = "Distribution: Schooling", x = "Years of schooling")
+
+# QQ Plot
+p2 <- ggplot(df, aes(sample = Schooling)) +
+  stat_qq() + stat_qq_line(color = "red") +
+  labs(title = "QQ Plot: Schooling")
+
+# Combine plots
+p1 + p2
+
+# Shapiro Wilk
+shapiro.test(df$Schooling)
+```
+
+From the Histogram & Density plot, the plot appeared to follow a uniform distribution. The QQ Plot showed the violation of normality as the plot had heavy tails and the Shapiro Wilk test had p-values close to zero, proving mathematically that normality was indeed in violation.
 
 
 
