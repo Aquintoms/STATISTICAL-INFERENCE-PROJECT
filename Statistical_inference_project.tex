@@ -819,7 +819,7 @@ as \texttt{Polio} and \texttt{Diphtheria}, \texttt{Infant\_deaths} and
 \texttt{Thinness\_ten\_nineteen\_years} and
 \texttt{Thinness\_five\_nine\_years}. These variables almost had a
 perfect relationship. Subsequent steps would handle this to prevent our
-tests from crushing.\\
+tests from crashing.\\
 
 We proceeded to address the distributional assumptions. We selected 3
 variables for this. We picked \texttt{Life\_expectancy} as it was our
@@ -953,6 +953,644 @@ We finally plotted for \texttt{schooling} variable.\\
 From the Histogram \& Density plot, the plot appeared to follow a
 uniform distribution. The QQ Plot showed the violation of normality as
 the plot had heavy tails and the Shapiro Wilk test had p-values close to
-zero, proving mathematically that normality was indeed in violation.
+zero, proving mathematically that normality was indeed in violation.\\
+
+Before proceeding to formally execute the various tests onto our data,
+we had to address certain issues identified in the EDA phase. To begin
+with, from the heatmap, some of the variables were heavily correlated.
+In order to prevent our subsequent tests from collapsing and giving us
+not so useful outputs, we dropped them. Similarly, due to the severe
+skewness that was identified previously, some transformations were
+required. We proceeded to log transform \texttt{GDP\_per\_capita} and
+\texttt{Population\_in\_mln}. The former was necessary to capture the
+high range of differences between the lowest value and the highest
+value. The latter was also log transformed (as shown below) to counter
+the range (\(1379.78\) - in millions) of population between highly and
+lowly populated countries. We also dropped the
+\texttt{Economy\_status\_Developing} variable and remained with
+\texttt{Economy\_status\_Developed} as we had determined previously that
+they were mutually exlusive.\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Dropping highly correlated features}
+\NormalTok{df\_clean }\OtherTok{\textless{}{-}}\NormalTok{ df }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{select}\NormalTok{(}\SpecialCharTok{{-}}\NormalTok{Infant\_deaths, }\CommentTok{\# Kept Under\_five\_deaths}
+         \SpecialCharTok{{-}}\NormalTok{Diphtheria,    }\CommentTok{\# Kept Polio}
+         \SpecialCharTok{{-}}\NormalTok{Thinness\_five\_nine\_years, }\CommentTok{\# Kept Thinness\_ten\_nineteen\_years}
+         \SpecialCharTok{{-}}\NormalTok{Economy\_status\_Developing) }\CommentTok{\# Kept Economy\_status\_Developed}
+
+\CommentTok{\# Log transformations}
+\NormalTok{df\_clean}\SpecialCharTok{$}\NormalTok{Log\_GDP }\OtherTok{\textless{}{-}} \FunctionTok{log}\NormalTok{(df\_clean}\SpecialCharTok{$}\NormalTok{GDP\_per\_capita)}
+\NormalTok{df\_clean}\SpecialCharTok{$}\NormalTok{Log\_Population }\OtherTok{\textless{}{-}} \FunctionTok{log}\NormalTok{(df\_clean}\SpecialCharTok{$}\NormalTok{Population\_mln)}
+
+\CommentTok{\# Dropping the raw variables (original ones)}
+\NormalTok{df\_clean }\OtherTok{\textless{}{-}}\NormalTok{ df\_clean }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{select}\NormalTok{(}\SpecialCharTok{{-}}\NormalTok{GDP\_per\_capita, }\SpecialCharTok{{-}}\NormalTok{Population\_mln)}
+
+\FunctionTok{dim}\NormalTok{(df\_clean)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 2864   17
+\end{verbatim}
+
+4 variables were dropped as 2 variables were log transformed. This paved
+the way for the Parametric Tests.\\
+
+\section{Parametric Tests}\label{parametric-tests}
+
+\subsection{1. Two-Sample T-test:Life Expectancy by Economic
+Status}\label{two-sample-t-testlife-expectancy-by-economic-status}
+
+\textbf{Research Question:} Is there a significant difference in the
+mean life expectancy between developed and developing nations?\\
+
+\textbf{Hypothesis}\\
+* \textbf{Null Hypothesis}
+\(H_0: \mu_{\text{developed}} = \mu_{\text{developing}}\) (There is no
+difference in mean life expectancy).\\
+* \textbf{Alternate Hypothesis}
+\(H_1: \mu_{\text{developed}} \neq \mu_{\text{developing}}\) (There is a
+significant difference).\\
+
+Our assumptions for this test were as follows:\\
+* \textbf{Independence}: The observations are independent countries.\\
+* \textbf{Normality}: Previously, it was determined that
+\texttt{Life\_expectancy} did not follow a normal distribution but being
+guided by the Central Limit Theorem, it allowed us to continue with the
+Parametric test due to the large sample size (\(N = 2864\))\\
+* \textbf{Variance}: In order to account for the potential unequal
+variance of the two groups,we shall use the Welch's Two-Sample t-test
+which does not assume equal variance.\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{welch\_test }\OtherTok{\textless{}{-}} \FunctionTok{t.test}\NormalTok{(Life\_expectancy }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Economy\_status\_Developed, }\AttributeTok{data =}\NormalTok{ df\_clean)}
+
+\NormalTok{welch\_test}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Welch Two Sample t-test
+## 
+## data:  Life_expectancy by Economy_status_Developed
+## t = -53.685, df = 2623.8, p-value < 2.2e-16
+## alternative hypothesis: true difference in means between group 0 and group 1 is not equal to 0
+## 95 percent confidence interval:
+##  -12.60832 -11.71972
+## sample estimates:
+## mean in group 0 mean in group 1 
+##        66.34173        78.50574
+\end{verbatim}
+
+The Welch two sample test was conducted to compare life expectancy
+between the developed and the developing nations. The project obtained
+the following results:\\
+* \texttt{t\ =\ -53.685}: This is the test statistic. It measures how
+far apart the two group means are. This shows that there was a big
+difference between the means of the developing and developed nations. It
+was calculated as the mean life expectancy of developing nations minus
+the developed ones.\\
+* \texttt{95\ percent\ confidence\ interval:\ -12.60832\ -11.71972}:
+This explains that with 95\% confidence, the true population difference
+in life expectancy lies between developing and developed nations lies
+between 11.72 years and 12.61 years.\\
+* \texttt{sample\ estimates:\ 66.34\ against\ 78.51}: These are the
+sample means whereby the average life expectancy of developing nations
+is 66.34 years and that of developed nations is 78.51 years.\\
+
+Since we obtained a p-value of less than 0.05, we reject the null
+hypothesis and conclude that developed nations have a significantly
+higher mean life expectancy than developing ones by approximately 12.17
+years.\\
+
+\subsection{2. Analysis of Variance
+(ANOVA)}\label{analysis-of-variance-anova}
+
+\textbf{Research Question:} Is there a significant difference in the
+mean life expectancy across different geographical regions in the
+world?\\
+
+\textbf{Hypothesis}\\
+* \textbf{Null Hypothesis} \(H_0: \mu_1 = \mu_2 = ...= \mu_k\) (There is
+no difference in mean life expectancy across different geographical
+regions).\\
+* \textbf{Alternate Hypothesis}
+\(H_1: \mu_1 \neq \mu_2 \neq ... \neq \mu_k\) (There is a difference in
+mean life expectancy across different geographical regions or at least
+one geographical mean is different from the rest).\\
+
+Our assumptions for this test were as follows:\\
+* \textbf{Independence}: The observations are independent countries.\\
+* \textbf{Normality}: Assumption of the residuals (difference between
+observed values and group means) are normally distributed as well as
+being guided by the Central Limit Theorem, it allowed us to continue
+with the Parametric test due to the large sample size (\(N = 2864\))\\
+* \textbf{Homogeneity of Variance}: ANOVA assumes that variance of each
+group is roughly equal (Homoskedasticity).\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{anova\_model }\OtherTok{\textless{}{-}} \FunctionTok{aov}\NormalTok{(Life\_expectancy }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Region, }\AttributeTok{data =}\NormalTok{ df\_clean)}
+
+\FunctionTok{summary}\NormalTok{(anova\_model)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##               Df Sum Sq Mean Sq F value Pr(>F)    
+## Region         8 157346   19668   585.4 <2e-16 ***
+## Residuals   2855  95930      34                   
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Post Hoc test {-} tells us which regions do differ that is}
+\CommentTok{\# if ANOVA is significant}
+\FunctionTok{TukeyHSD}\NormalTok{(anova\_model)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   Tukey multiple comparisons of means
+##     95% family-wise confidence level
+## 
+## Fit: aov(formula = Life_expectancy ~ Region, data = df_clean)
+## 
+## $Region
+##                                                     diff          lwr
+## Asia-Africa                                  11.60755719  10.53693803
+## Central America and Caribbean-Africa         14.59019608  13.38115290
+## European Union-Africa                        19.86774237  18.79712321
+## Middle East-Africa                           16.12814251  14.77088500
+## North America-Africa                         19.99436275  17.32193578
+## Oceania-Africa                               11.67030971  10.17486937
+## Rest of Europe-Africa                        16.67811275  15.35682949
+## South America-Africa                         14.93342525  13.49014973
+## Central America and Caribbean-Asia            2.98263889   1.63561619
+## European Union-Asia                           8.26018519   7.03588534
+## Middle East-Asia                              4.52058532   3.03908855
+## North America-Asia                            8.38680556   5.64918787
+## Oceania-Asia                                  0.06275253  -1.54629271
+## Rest of Europe-Asia                           5.07055556   3.62194444
+## South America-Asia                            3.32586806   1.76518585
+## European Union-Central America and Caribbean  5.27754630   3.93052360
+## Middle East-Central America and Caribbean     1.53794643  -0.04647545
+## North America-Central America and Caribbean   5.40416667   2.60950915
+## Oceania-Central America and Caribbean        -2.91988636  -4.62417114
+## Rest of Europe-Central America and Caribbean  2.08791667   0.53420041
+## South America-Central America and Caribbean   0.34322917  -1.31547182
+## Middle East-European Union                   -3.73959987  -5.22109664
+## North America-European Union                  0.12662037  -2.61099732
+## Oceania-European Union                       -8.19743266  -9.80647790
+## Rest of Europe-European Union                -3.18962963  -4.63824075
+## South America-European Union                 -4.93431713  -6.49499934
+## North America-Middle East                     3.86622024   1.00431997
+## Oceania-Middle East                          -4.45783279  -6.27027565
+## Rest of Europe-Middle East                    0.54997024  -1.12167468
+## South America-Middle East                    -1.19471726  -2.96436454
+## Oceania-North America                        -8.32405303 -11.25401328
+## Rest of Europe-North America                 -3.31625000  -6.16126576
+## South America-North America                  -5.06093750  -7.96461955
+## Rest of Europe-Oceania                        5.00780303   3.22214051
+## South America-Oceania                         3.26311553   1.38539207
+## South America-Rest of Europe                 -1.74468750  -3.48689673
+##                                                       upr     p adj
+## Asia-Africa                                  12.678176350 0.0000000
+## Central America and Caribbean-Africa         15.799239259 0.0000000
+## European Union-Africa                        20.938361535 0.0000000
+## Middle East-Africa                           17.485400015 0.0000000
+## North America-Africa                         22.666789708 0.0000000
+## Oceania-Africa                               13.165750064 0.0000000
+## Rest of Europe-Africa                        17.999395999 0.0000000
+## South America-Africa                         16.376700760 0.0000000
+## Central America and Caribbean-Asia            4.329661586 0.0000000
+## European Union-Asia                           9.484485035 0.0000000
+## Middle East-Asia                              6.002082087 0.0000000
+## North America-Asia                           11.124423244 0.0000000
+## Oceania-Asia                                  1.671797762 1.0000000
+## Rest of Europe-Asia                           6.519166673 0.0000000
+## South America-Asia                            4.886550261 0.0000000
+## European Union-Central America and Caribbean  6.624568994 0.0000000
+## Middle East-Central America and Caribbean     3.122368312 0.0651412
+## North America-Central America and Caribbean   8.198824183 0.0000001
+## Oceania-Central America and Caribbean        -1.215601587 0.0000040
+## Rest of Europe-Central America and Caribbean  3.641632920 0.0010394
+## South America-Central America and Caribbean   2.001930156 0.9993574
+## Middle East-European Union                   -2.258103098 0.0000000
+## North America-European Union                  2.864238059 1.0000000
+## Oceania-European Union                       -6.588387423 0.0000000
+## Rest of Europe-European Union                -1.741018512 0.0000000
+## South America-European Union                 -3.373634924 0.0000000
+## North America-Middle East                     6.728120510 0.0009462
+## Oceania-Middle East                          -2.645389930 0.0000000
+## Rest of Europe-Middle East                    2.221615155 0.9839340
+## South America-Middle East                     0.574930021 0.4764421
+## Oceania-North America                        -5.394092781 0.0000000
+## Rest of Europe-North America                 -0.471234243 0.0091737
+## South America-North America                  -2.157255452 0.0000024
+## Rest of Europe-Oceania                        6.793465547 0.0000000
+## South America-Oceania                         5.140838992 0.0000027
+## South America-Rest of Europe                 -0.002478271 0.0493486
+\end{verbatim}
+
+The ANOVA test shows the mean life expectancy of at least one region is
+different from the other regions. On the other hand, the Tukey post-hoc
+test compares every region with all the other regions in order to obtain
+the gaps.\\
+
+The anova obtained a p-value close to zero. Since the p-value was less
+than 0.05, we rejected the null hypothesis and concluded that there is a
+difference in mean life expectancy across different geographical
+regions.\\
+The Tukey post-hoc test indicated that there were significantly large
+disparities between North America/EU/Asia and Africa. This showed that
+the former was outliving the latter by more than 10 years on average.
+For instance, \texttt{North\ America\ -\ Africa} had a difference of
+19.99 years with a p-value very close zero indicating that it was
+significant. Non significant disparities were also identified such as
+\texttt{Oceania-Asia} which had a difference of 0.06 years with a
+p-value of 1.\\
+
+\subsection{3. Multiple Linear
+Regression}\label{multiple-linear-regression}
+
+\textbf{Research Question:} By what value or extent do the economic
+indicators, healthcare of a country, physical metrics and demographic
+scales such as region predict the life expectancy of a country? Which of
+these variables are the most critical in determining the life expectancy
+of a country?\\
+
+\textbf{Hypothesis}\\
+* \textbf{Null Hypothesis}
+\(H_0: \beta_1 = \beta_2 = \dots = \beta_k = 0\) (None of the predictor
+variables have a significant linear relationship with life
+expectancy).\\
+* \textbf{Alternate Hypothesis} \(H_1: \beta_i \neq 0\) (At least one
+predictor is statistically significant).\\
+
+Our assumptions for this test were as follows:\\
+* \textbf{Linearity}: There is a linear relationship between dependent
+and independent variables.\\
+* \textbf{Independence of errors}: Assumption of no autocorrelation
+(thus year will be omitted in the regression model).\\
+* \textbf{Homogeneity of Variance}: Residuals must have a constant
+variance (Homoskedasticity).\\
+* \textbf{Normality of Residuals}: Residuals must be normally
+distributed.\\
+* \textbf{No multicollinearity}: The predictors are independent of each
+other.\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Removed country to prevent dummy variables as region}
+\CommentTok{\# takes care of country. Year omitted to prevent autocorrelation}
+\NormalTok{df\_reg }\OtherTok{\textless{}{-}}\NormalTok{ df\_clean }\SpecialCharTok{|\textgreater{}} 
+  \FunctionTok{select}\NormalTok{(}\SpecialCharTok{{-}}\NormalTok{Country, }\SpecialCharTok{{-}}\NormalTok{Year) }
+
+\CommentTok{\# Fitting the full model}
+\NormalTok{full\_model }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(Life\_expectancy }\SpecialCharTok{\textasciitilde{}}\NormalTok{ ., }\AttributeTok{data =}\NormalTok{ df\_reg)}
+
+\FunctionTok{summary}\NormalTok{(full\_model)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = Life_expectancy ~ ., data = df_reg)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -4.5670 -0.8148 -0.0138  0.7452  6.5284 
+## 
+## Coefficients:
+##                                      Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)                         78.433382   0.655799 119.600  < 2e-16 ***
+## RegionAsia                           0.025078   0.096381   0.260  0.79473    
+## RegionCentral America and Caribbean  1.928189   0.107083  18.006  < 2e-16 ***
+## RegionEuropean Union                -0.674167   0.158882  -4.243 2.27e-05 ***
+## RegionMiddle East                   -0.106298   0.123187  -0.863  0.38826    
+## RegionNorth America                  0.058726   0.215624   0.272  0.78537    
+## RegionOceania                       -0.600817   0.133436  -4.503 6.98e-06 ***
+## RegionRest of Europe                 0.443897   0.127186   3.490  0.00049 ***
+## RegionSouth America                  1.302848   0.121439  10.728  < 2e-16 ***
+## Under_five_deaths                   -0.075554   0.001509 -50.057  < 2e-16 ***
+## Adult_mortality                     -0.046771   0.000559 -83.668  < 2e-16 ***
+## Alcohol_consumption                 -0.019039   0.010462  -1.820  0.06890 .  
+## Hepatitis_B                         -0.005217   0.002120  -2.461  0.01393 *  
+## Measles                              0.000621   0.001544   0.402  0.68750    
+## BMI                                 -0.133424   0.020193  -6.607 4.66e-11 ***
+## Polio                                0.008431   0.002949   2.859  0.00429 ** 
+## Incidents_HIV                        0.085379   0.016668   5.122 3.22e-07 ***
+## Thinness_ten_nineteen_years         -0.018458   0.007506  -2.459  0.01399 *  
+## Schooling                            0.088666   0.016704   5.308 1.19e-07 ***
+## Economy_status_Developed             2.395997   0.142946  16.762  < 2e-16 ***
+## Log_GDP                              0.489615   0.037253  13.143  < 2e-16 ***
+## Log_Population                       0.155699   0.014817  10.508  < 2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1.195 on 2842 degrees of freedom
+## Multiple R-squared:  0.984,  Adjusted R-squared:  0.9839 
+## F-statistic:  8309 on 21 and 2842 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
+From the \texttt{full\_model}, we obtained a p-value of less than 0.05.
+We rejected the null hypothesis and concluded that at least one
+predictor is statistically significant. This was also evidenced by the
+numerous variables which had a p-value of less than 0.05.\\
+
+However, there was a much bigger problem. The
+\texttt{Multiple\ R-squared} (\(0.984\)) and
+\texttt{Adjusted\ R-squared} (\(0.9839\)) were quite high. This showed
+that the model was explaining 98.39\% of the variations. This was not a
+real world scenario as it indicated a high likelihood of overfitting
+and/or data leakage. In order to identify which variables had high
+multicollinearity, we proceeded to conduct the Variance Inflation Factor
+Test (VIF). Variables that had a VIF \(>5\) or \(>10\) would be
+candidates for omission.\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(car)}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{ VIF Diagnostic }\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  VIF Diagnostic
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{vif}\NormalTok{(full\_model)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                                  GVIF Df GVIF^(1/(2*Df))
+## Region                      57.135455  8        1.287676
+## Under_five_deaths            9.071305  1        3.011861
+## Adult_mortality              8.270868  1        2.875912
+## Alcohol_consumption          3.478939  1        1.865192
+## Hepatitis_B                  2.305737  1        1.518465
+## Measles                      1.663116  1        1.289618
+## BMI                          3.934252  1        1.983495
+## Polio                        3.965863  1        1.991447
+## Incidents_HIV                3.158354  1        1.777176
+## Thinness_ten_nineteen_years  2.224589  1        1.491506
+## Schooling                    5.625837  1        2.371885
+## Economy_status_Developed     6.718803  1        2.592065
+## Log_GDP                      5.802112  1        2.408757
+## Log_Population               1.603863  1        1.266437
+\end{verbatim}
+
+The VIF test brought to life the inherent multicollinearity as explained
+below:\\
+* \texttt{Under\_five\_deaths} and \texttt{Adult\_mortality} had a
+\(9.07\) and \(8.27\) respectively. They are used to calculate life
+expectancy directly. This was a situation of data leakage as well as
+endogeneity. Both variables were dropped.\\
+* \texttt{Economic\_status\_Developed} and \texttt{Log\_GDP} both had
+values greater than 5. These variables essentially explain the same
+thing in that a country with a high GDP is in a higher economic tier. We
+dropped the categorical variable \texttt{Economic\_status\_Developed}.
+Hopefully this would lead to \texttt{Schooling} going down.\\
+* \texttt{Region} was not omitted due its properties. The dataset had 9
+different regions making the Degrees of Freedom to be 8. A series of
+dummy variables were created which in turned inflated the VIF to
+\(\approx 57\). The \texttt{GVIF\^{}(1/(2*Df))} penalizes it due to the
+many dummy variables so that it could be observed on an equal
+mathematically playing field. Squaring it (\(1.287676\)) leads to
+\(\approx 1.7\), which is much below the 5 threshold.\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{df\_pruned }\OtherTok{\textless{}{-}}\NormalTok{ df\_reg }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{select}\NormalTok{(}\SpecialCharTok{{-}}\NormalTok{Under\_five\_deaths, }\SpecialCharTok{{-}}\NormalTok{Adult\_mortality, }\SpecialCharTok{{-}}\NormalTok{Economy\_status\_Developed)}
+
+\NormalTok{healthy\_model }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(Life\_expectancy }\SpecialCharTok{\textasciitilde{}}\NormalTok{., }\AttributeTok{data =}\NormalTok{ df\_pruned)}
+
+\FunctionTok{summary}\NormalTok{(healthy\_model)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = Life_expectancy ~ ., data = df_pruned)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -11.1971  -1.8175   0.0769   1.9846   9.8581 
+## 
+## Coefficients:
+##                                      Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)                         21.639992   1.196965  18.079  < 2e-16 ***
+## RegionAsia                           3.370484   0.238248  14.147  < 2e-16 ***
+## RegionCentral America and Caribbean  5.173416   0.264031  19.594  < 2e-16 ***
+## RegionEuropean Union                 5.529740   0.314741  17.569  < 2e-16 ***
+## RegionMiddle East                    2.228354   0.315028   7.074 1.89e-12 ***
+## RegionNorth America                  3.262192   0.543812   5.999 2.24e-09 ***
+## RegionOceania                        3.580553   0.324718  11.027  < 2e-16 ***
+## RegionRest of Europe                 5.349639   0.311107  17.195  < 2e-16 ***
+## RegionSouth America                  4.668974   0.299024  15.614  < 2e-16 ***
+## Alcohol_consumption                 -0.291121   0.026279 -11.078  < 2e-16 ***
+## Hepatitis_B                         -0.004631   0.005514  -0.840    0.401    
+## Measles                             -0.001750   0.004008  -0.437    0.662    
+## BMI                                  0.205423   0.049735   4.130 3.73e-05 ***
+## Polio                                0.152926   0.006595  23.187  < 2e-16 ***
+## Incidents_HIV                       -1.183328   0.029039 -40.749  < 2e-16 ***
+## Thinness_ten_nineteen_years          0.038470   0.019356   1.987    0.047 *  
+## Schooling                            0.216259   0.041274   5.240 1.73e-07 ***
+## Log_GDP                              3.128526   0.075681  41.338  < 2e-16 ***
+## Log_Population                       0.325276   0.038000   8.560  < 2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 3.109 on 2845 degrees of freedom
+## Multiple R-squared:  0.8914, Adjusted R-squared:  0.8907 
+## F-statistic:  1298 on 18 and 2845 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Checking if VIF is below the 5 threshold}
+\FunctionTok{vif}\NormalTok{(healthy\_model)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                                  GVIF Df GVIF^(1/(2*Df))
+## Region                      18.623803  8        1.200547
+## Alcohol_consumption          3.242914  1        1.800809
+## Hepatitis_B                  2.304150  1        1.517943
+## Measles                      1.656692  1        1.287125
+## BMI                          3.526199  1        1.877818
+## Polio                        2.929921  1        1.711701
+## Incidents_HIV                1.416373  1        1.190115
+## Thinness_ten_nineteen_years  2.185736  1        1.478423
+## Schooling                    5.075135  1        2.252806
+## Log_GDP                      3.538162  1        1.881000
+## Log_Population               1.558552  1        1.248420
+\end{verbatim}
+
+From the model, we obtained a Multiple R-squared of 0.8914 and a
+adjusted R-squared of 0.8907. This informed us that the model explained
+89.07\% of the variation. This was a drop from the previous model which
+had been plagued by multicollinearity. VIF test was also conducted and
+we observed that schooling had a VIF of 5.07. As explained by
+\textbf{Grossman, 1972} and \textbf{Lleras-Muney, 2005}, dropping
+\texttt{Schooling} would introduce severe omitted variable bias. This is
+because it is a fundamental structural determinant of health.
+Additionally \textbf{Balaj, M., et al.~(2024)} argues that every single
+additional year of schooling reduces the risk of adult mortality by
+1.9\%. Finally, a VIF of 5 falls well within acceptable limits according
+to standard econometric practices as explained by \textbf{O'Brien,
+2007}. Its exclusion would misrepresent the independent causal effect
+that educational attainment exerts on life expectancy separate from
+income. We decided not to drop \texttt{Schooling} as it was essential
+for this project.\\
+
+An interesting discovery was that upon the omission of the variables,
+the coefficients of \texttt{Incidents\_HIV} became a negative
+(\(-1.18\)). Previously, it was a positive (\(\approx 0.08\)),
+indicating that the disease led to an increase in life expectancy and
+this was not the case.\\
+
+We proceeded to construct the optimum model by using the stepwise
+function.This optimum model would aid in determining subsequent
+diagnostics to identify if other OLS assumptions were violated.\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{optimum\_model }\OtherTok{\textless{}{-}} \FunctionTok{step}\NormalTok{(healthy\_model, }\AttributeTok{direction =} \StringTok{"both"}\NormalTok{, }\AttributeTok{trace =} \DecValTok{0}\NormalTok{)}
+
+\FunctionTok{summary}\NormalTok{(optimum\_model)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = Life_expectancy ~ Region + Alcohol_consumption + 
+##     BMI + Polio + Incidents_HIV + Thinness_ten_nineteen_years + 
+##     Schooling + Log_GDP + Log_Population, data = df_pruned)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -11.2068  -1.8445   0.0865   2.0105   9.8184 
+## 
+## Coefficients:
+##                                      Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)                         21.576062   1.194700  18.060  < 2e-16 ***
+## RegionAsia                           3.387139   0.237611  14.255  < 2e-16 ***
+## RegionCentral America and Caribbean  5.185287   0.263670  19.666  < 2e-16 ***
+## RegionEuropean Union                 5.556100   0.313119  17.744  < 2e-16 ***
+## RegionMiddle East                    2.237065   0.314596   7.111 1.45e-12 ***
+## RegionNorth America                  3.345999   0.533674   6.270 4.16e-10 ***
+## RegionOceania                        3.621458   0.321483  11.265  < 2e-16 ***
+## RegionRest of Europe                 5.367197   0.308716  17.386  < 2e-16 ***
+## RegionSouth America                  4.689453   0.297606  15.757  < 2e-16 ***
+## Alcohol_consumption                 -0.291137   0.026274 -11.081  < 2e-16 ***
+## BMI                                  0.202428   0.049636   4.078 4.66e-05 ***
+## Polio                                0.148623   0.004892  30.379  < 2e-16 ***
+## Incidents_HIV                       -1.182048   0.028988 -40.777  < 2e-16 ***
+## Thinness_ten_nineteen_years          0.038813   0.019329   2.008   0.0447 *  
+## Schooling                            0.215233   0.041189   5.225 1.86e-07 ***
+## Log_GDP                              3.124673   0.075179  41.563  < 2e-16 ***
+## Log_Population                       0.329366   0.037731   8.729  < 2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 3.109 on 2847 degrees of freedom
+## Multiple R-squared:  0.8914, Adjusted R-squared:  0.8908 
+## F-statistic:  1460 on 16 and 2847 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
+From the stepwise function, we obtained the combination of variables
+with the lowest AIC score. Some of the intercepts were interpreted as
+follows:\\
+1. \texttt{RegionEuropeanUnion} had a coefficient of \(\approx 5.55\).
+This meant that holding all other factors constant, individuals living
+in the European Union have a life expectancy approximately 5.55 years
+higher than those living in the baseline region (Africa). This was the
+variable with the highest coefficient overall which meant that people
+living in the European Union have a higher life expectancy as compared
+to other regions.\\
+2. \texttt{Alcohol\_consumption} had a coefficient of \(\approx -0.29\).
+This meant that a unit change in the consumption of alcohol, would
+result in 0.29 reduction in life expectancy when all other factors are
+held constant. This explained that alcohol did not promote long life.\\
+3. \texttt{Polio} had a coefficient of \(\approx 0.14\). This meant that
+a unit increase in Polio's vaccination coverage would result in an
+increase of 0.14 years in life expectancy when all other factors are
+held constant. Polio was the only vaccination disease that was picked by
+the optimum model which shows that its vaccination coverage is a great
+driver of life expectancy.\\
+
+The optimum model had an adjusted R squared of 0.8908 which was a very
+slight increase from the regression model. This informed us that the
+model explained 89.08\% of the variations as the remaining 10.92\% would
+be explained by other factors not included in the model.\\
+
+We proceeded to have a comparison table between the multiple linear
+regression model and the optimum model.\\
+
+\begin{table}[!htbp] \centering 
+  \caption{Comparison of Healthy MLR and Optimum Stepwise Models} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lcc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{2}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-3} 
+\\[-1.8ex] & \multicolumn{2}{c}{Life\_expectancy} \\ 
+ & Healthy Model & Optimum Model \\ 
+\\[-1.8ex] & (1) & (2)\\ 
+\hline \\[-1.8ex] 
+ RegionAsia & 3.370$^{***}$ (0.238) & 3.387$^{***}$ (0.238) \\ 
+  RegionCentral America and Caribbean & 5.173$^{***}$ (0.264) & 5.185$^{***}$ (0.264) \\ 
+  RegionEuropean Union & 5.530$^{***}$ (0.315) & 5.556$^{***}$ (0.313) \\ 
+  RegionMiddle East & 2.228$^{***}$ (0.315) & 2.237$^{***}$ (0.315) \\ 
+  RegionNorth America & 3.262$^{***}$ (0.544) & 3.346$^{***}$ (0.534) \\ 
+  RegionOceania & 3.581$^{***}$ (0.325) & 3.621$^{***}$ (0.321) \\ 
+  RegionRest of Europe & 5.350$^{***}$ (0.311) & 5.367$^{***}$ (0.309) \\ 
+  RegionSouth America & 4.669$^{***}$ (0.299) & 4.689$^{***}$ (0.298) \\ 
+  Alcohol\_consumption & $-$0.291$^{***}$ (0.026) & $-$0.291$^{***}$ (0.026) \\ 
+  Hepatitis\_B & $-$0.005 (0.006) &  \\ 
+  Measles & $-$0.002 (0.004) &  \\ 
+  BMI & 0.205$^{***}$ (0.050) & 0.202$^{***}$ (0.050) \\ 
+  Polio & 0.153$^{***}$ (0.007) & 0.149$^{***}$ (0.005) \\ 
+  Incidents\_HIV & $-$1.183$^{***}$ (0.029) & $-$1.182$^{***}$ (0.029) \\ 
+  Thinness\_ten\_nineteen\_years & 0.038$^{**}$ (0.019) & 0.039$^{**}$ (0.019) \\ 
+  Schooling & 0.216$^{***}$ (0.041) & 0.215$^{***}$ (0.041) \\ 
+  Log\_GDP & 3.129$^{***}$ (0.076) & 3.125$^{***}$ (0.075) \\ 
+  Log\_Population & 0.325$^{***}$ (0.038) & 0.329$^{***}$ (0.038) \\ 
+  Constant & 21.640$^{***}$ (1.197) & 21.576$^{***}$ (1.195) \\ 
+ \hline \\[-1.8ex] 
+Observations & 2,864 & 2,864 \\ 
+R$^{2}$ & 0.891 & 0.891 \\ 
+Adjusted R$^{2}$ & 0.891 & 0.891 \\ 
+Residual Std. Error & 3.109 (df = 2845) & 3.109 (df = 2847) \\ 
+F Statistic & 1,297.546$^{***}$ (df = 18; 2845) & 1,460.187$^{***}$ (df = 16; 2847) \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{2}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+\end{table}
+
+The adjusted R squared was still high for typical real world scenarios
+which indicated possible violations of the assumptions. Diagnostics were
+done onto these parametric tests to determine if indeed there were
+violations of the assumptions.\\
 
 \end{document}

@@ -293,7 +293,7 @@ corrplot(cor_matrix,
 
 The heatmap validated the scatterplot as there there was a sufficiently high degree of correlation (`0.73`) between `Schooling` and `Life_expectancy`. We also saw a moderate positive relationship between `Life_expectancy` and `GDP_per_capita` as it was valued at `0.58`.\
 There was a very strong negative relationship (`0.95`) between `Life_expectancy` and `Adult_mortality`. This inverse relationship can be explained as the life expectancy increases, it results to a decrease in the rates of adult mortality.\
-We also saw evidence of multicollinearity amongst certain variables such as `Polio` and  `Diphtheria`, `Infant_deaths` and `Under_five_deaths`, and `Thinness_ten_nineteen_years` and `Thinness_five_nine_years`. These variables almost had a perfect relationship. Subsequent steps would handle this to prevent our tests from crushing.\
+We also saw evidence of multicollinearity amongst certain variables such as `Polio` and  `Diphtheria`, `Infant_deaths` and `Under_five_deaths`, and `Thinness_ten_nineteen_years` and `Thinness_five_nine_years`. These variables almost had a perfect relationship. Subsequent steps would handle this to prevent our tests from crashing.\
 
 We proceeded to address the distributional assumptions. We selected 3 variables for this. We picked `Life_expectancy` as it was our dependent variable. Previously, we had observed that `GDP_per_capita` was skewed. This was also selected to see how it violated normality. We also selected a more symmetric variable which was `schooling` to serve as a comparison metric to the skewed variable.\
 
@@ -361,7 +361,163 @@ p1 + p2
 shapiro.test(df$Schooling)
 ```
 
-From the Histogram & Density plot, the plot appeared to follow a uniform distribution. The QQ Plot showed the violation of normality as the plot had heavy tails and the Shapiro Wilk test had p-values close to zero, proving mathematically that normality was indeed in violation.
+From the Histogram & Density plot, the plot appeared to follow a uniform distribution. The QQ Plot showed the violation of normality as the plot had heavy tails and the Shapiro Wilk test had p-values close to zero, proving mathematically that normality was indeed in violation.\
 
+Before proceeding to formally execute the various tests onto our data, we had to address certain issues identified in the EDA phase. To begin with, from the heatmap, some of the variables were heavily correlated. In order to prevent our subsequent tests from collapsing and giving us not so useful outputs, we dropped them. Similarly, due to the severe skewness that was identified previously, some transformations were required. We proceeded to log transform `GDP_per_capita` and `Population_in_mln`. The former was necessary to capture the high range of differences between the lowest value and the highest value. The latter was also log transformed (as shown below) to counter the range ($1379.78$ - in millions) of population between highly and lowly populated countries. We also dropped the `Economy_status_Developing` variable and remained with `Economy_status_Developed` as we had determined previously that they were mutually exlusive.\
+
+```{r data_preprocessing, echo=TRUE}
+# Dropping highly correlated features
+df_clean <- df |>
+  select(-Infant_deaths, # Kept Under_five_deaths
+         -Diphtheria,    # Kept Polio
+         -Thinness_five_nine_years, # Kept Thinness_ten_nineteen_years
+         -Economy_status_Developing) # Kept Economy_status_Developed
+
+# Log transformations
+df_clean$Log_GDP <- log(df_clean$GDP_per_capita)
+df_clean$Log_Population <- log(df_clean$Population_mln)
+
+# Dropping the raw variables (original ones)
+df_clean <- df_clean |>
+  select(-GDP_per_capita, -Population_mln)
+
+dim(df_clean)
+
+```
+4 variables were dropped as 2 variables were log transformed. This paved the way for the Parametric Tests.\
+
+# Parametric Tests
+## 1. Two-Sample T-test:Life Expectancy by Economic Status
+**Research Question:** Is there a significant difference in the mean life expectancy between developed and developing nations?\
+
+**Hypothesis**\
+* **Null Hypothesis** $H_0: \mu_{\text{developed}} = \mu_{\text{developing}}$ (There is no difference in mean life expectancy).\
+* **Alternate Hypothesis** $H_1: \mu_{\text{developed}} \neq \mu_{\text{developing}}$ (There is a significant difference).\
+
+Our assumptions for this test were as follows:\
+* **Independence**: The observations are independent countries.\
+* **Normality**: Previously, it was determined that `Life_expectancy` did not follow a normal distribution but being guided by the Central Limit Theorem, it allowed us to continue with the Parametric test due to the large sample size ($N = 2864$)\
+* **Variance**: In order to account for the potential unequal variance of the two groups,we shall use the Welch's Two-Sample t-test which does not assume equal variance.\
+
+```{r t_test_econ, echo=TRUE}
+welch_test <- t.test(Life_expectancy ~ Economy_status_Developed, data = df_clean)
+
+welch_test
+```
+The Welch two sample test was conducted to compare life expectancy between the developed and the developing nations. The project obtained the following results:\
+* `t = -53.685`: This is the test statistic. It measures how far apart the two group means are. This shows that there was a big difference between the means of the developing and developed nations. It was calculated as the mean life expectancy of developing nations minus the developed ones.\
+* `95 percent confidence interval: -12.60832 -11.71972`: This explains that with 95\% confidence, the true population difference in life expectancy lies between developing and developed nations lies between 11.72 years and 12.61 years.\
+* `sample estimates: 66.34 against 78.51`: These are the sample means whereby the average life expectancy of developing nations is 66.34 years and that of developed nations is 78.51 years.\
+
+Since we obtained a p-value of less than 0.05, we reject the null hypothesis and conclude that developed nations have a significantly higher mean life expectancy than developing ones by approximately 12.17 years.\
+
+## 2. Analysis of Variance (ANOVA)
+**Research Question:** Is there a significant difference in the mean life expectancy across different geographical regions in the world?\
+
+**Hypothesis**\
+* **Null Hypothesis** $H_0: \mu_1 = \mu_2 = ...= \mu_k$ (There is no difference in mean life expectancy across different geographical regions).\
+* **Alternate Hypothesis** $H_1: \mu_1 \neq \mu_2 \neq ... \neq \mu_k$ (There is a difference in mean life expectancy across different geographical regions or at least one geographical mean is different from the rest).\
+
+Our assumptions for this test were as follows:\
+* **Independence**: The observations are independent countries.\
+* **Normality**: Assumption of the residuals (difference between observed values and group means) are normally distributed as well as being guided by the Central Limit Theorem, it allowed us to continue with the Parametric test due to the large sample size ($N = 2864$)\
+* **Homogeneity of Variance**: ANOVA assumes that variance of each group is roughly equal (Homoskedasticity).\
+
+```{r anova_region, echo=TRUE}
+anova_model <- aov(Life_expectancy ~ Region, data = df_clean)
+
+summary(anova_model)
+
+# Post Hoc test - tells us which regions do differ that is
+# if ANOVA is significant
+TukeyHSD(anova_model)
+```
+The ANOVA test shows the mean life expectancy of at least one region is different from the other regions. On the other hand, the Tukey post-hoc test compares every region with all the other regions in order to obtain the gaps.\
+
+The anova obtained a p-value close to zero. Since the p-value was less than 0.05, we rejected the null hypothesis and concluded that there is a difference in mean life expectancy across different geographical regions.\
+The Tukey post-hoc test indicated that there were significantly large disparities between North America/EU/Asia and Africa.  This showed that the former was outliving the latter by more than 10 years on average. For instance, `North America - Africa` had a difference of 19.99 years with a p-value very close zero indicating that it was significant. Non significant disparities were also identified such as `Oceania-Asia` which had a difference of 0.06 years with a p-value of 1.\
+
+## 3. Multiple Linear Regression
+**Research Question:** By what value or extent do the economic indicators, healthcare of a country, physical metrics and demographic scales such as region predict the life expectancy of a country? Which of these variables are the most critical in determining the life expectancy of a country?\
+
+**Hypothesis**\
+* **Null Hypothesis** $H_0: \beta_1 = \beta_2 = \dots = \beta_k = 0$ (None of the predictor variables have a significant linear relationship with life expectancy).\
+* **Alternate Hypothesis** $H_1: \beta_i \neq 0$ (At least one predictor is statistically significant).\
+
+Our assumptions for this test were as follows:\
+* **Linearity**: There is a linear relationship between dependent and independent variables.\
+* **Independence of errors**: Assumption of no autocorrelation (thus year will be omitted in the regression model).\
+* **Homogeneity of Variance**: Residuals must have a constant variance (Homoskedasticity).\
+* **Normality of Residuals**: Residuals must be normally distributed.\
+* **No multicollinearity**: The predictors are independent of each other.\
+
+```{r mlr_stepwise, echo=TRUE}
+# Removed country to prevent dummy variables as region
+# takes care of country. Year omitted to prevent autocorrelation
+df_reg <- df_clean |> 
+  select(-Country, -Year) 
+
+# Fitting the full model
+full_model <- lm(Life_expectancy ~ ., data = df_reg)
+
+summary(full_model)
+```
+From the `full_model`, we obtained a p-value of less than 0.05. We rejected the null hypothesis and concluded that at least one predictor is statistically significant. This was also evidenced by the numerous variables which had a p-value of less than 0.05.\
+
+However, there was a much bigger problem. The `Multiple R-squared` ($0.984$) and `Adjusted R-squared` ($0.9839$) were quite high. This showed that the model was explaining 98.39\% of the variations. This was not a real world scenario as it indicated a high likelihood of overfitting and/or data leakage. In order to identify which variables had high multicollinearity, we proceeded to conduct the Variance Inflation Factor Test (VIF). Variables that had a VIF $>5$ or $>10$ would be candidates for omission.\
+
+```{r vif, echo=TRUE}
+library(car)
+cat("\n VIF Diagnostic \n")
+vif(full_model)
+```
+The VIF test brought to life the inherent multicollinearity as explained below:\
+* `Under_five_deaths` and `Adult_mortality` had a $9.07$ and $8.27$ respectively. They are used to calculate life expectancy directly. This was a situation of data leakage as well as endogeneity. Both variables were dropped.\
+* `Economic_status_Developed` and `Log_GDP` both had values greater than 5. These variables essentially explain the same thing in that a country with a high GDP is in a higher economic tier. We dropped the categorical variable `Economic_status_Developed`. Hopefully this would lead to `Schooling` going down.\
+* `Region` was not omitted due its properties. The dataset had 9 different regions making the Degrees of Freedom to be 8. A series of dummy variables were created which in turned inflated the VIF to $\approx 57$. The `GVIF^(1/(2*Df))` penalizes it due to the many dummy variables so that it could be observed on an equal mathematically playing field. Squaring it ($1.287676$) leads to $\approx 1.7$, which is much below the 5 threshold.\
+
+```{r regression_clean, echo=TRUE}
+df_pruned <- df_reg |>
+  select(-Under_five_deaths, -Adult_mortality, -Economy_status_Developed)
+
+healthy_model <- lm(Life_expectancy ~., data = df_pruned)
+
+summary(healthy_model)
+
+# Checking if VIF is below the 5 threshold
+vif(healthy_model)
+```
+From the model, we obtained a Multiple R-squared of 0.8914 and a adjusted R-squared of 0.8907. This informed us that the model explained 89.07\% of the variation. This was a drop from the previous model which had been plagued by multicollinearity. VIF test was also conducted and we observed that schooling had a VIF of 5.07. As explained by **Grossman, 1972** and **Lleras-Muney, 2005**, dropping `Schooling` would introduce severe omitted variable bias. This is because it is a fundamental structural determinant of health. Additionally **Balaj, M., et al. (2024)** argues that every single additional year of schooling reduces the risk of adult mortality by 1.9\%. Finally, a VIF of 5 falls well within acceptable limits according to standard econometric practices as explained by **O'Brien, 2007**. Its exclusion would misrepresent the independent causal effect that educational attainment exerts on life expectancy separate from income. We decided not to drop `Schooling` as it was essential for this project.\
+
+An interesting discovery was that upon the omission of the variables, the coefficients of `Incidents_HIV` became a negative ($-1.18$). Previously, it was a positive ($\approx 0.08$), indicating that the disease led to an increase in life expectancy and this was not the case.\
+
+We proceeded to construct the optimum model by using the stepwise function.This optimum model would aid in determining subsequent diagnostics to identify if other OLS assumptions were violated.\
+
+```{r stepwise, echo=TRUE}
+optimum_model <- step(healthy_model, direction = "both", trace = 0)
+
+summary(optimum_model)
+```
+From the stepwise function, we obtained the combination of variables with the lowest AIC score. Some of the intercepts were interpreted as follows:\
+1. `RegionEuropeanUnion` had a coefficient of $\approx 5.55$. This meant that holding all other factors constant, individuals living in the European Union have a life expectancy approximately 5.55 years higher than those living in the baseline region (Africa). This was the variable with the highest coefficient overall which meant that people living in the European Union have a higher life expectancy as compared to other regions.\
+2. `Alcohol_consumption` had a coefficient of $\approx -0.29$. This meant that a unit change in the consumption of alcohol, would result in 0.29 reduction in life expectancy when all other factors are held constant. This explained that alcohol did not promote long life.\
+3. `Polio` had a coefficient of $\approx 0.14$. This meant that a unit increase in Polio's vaccination coverage would result in an increase of 0.14 years in life expectancy when all other factors are held constant. Polio was the only vaccination disease that was picked by the optimum model which shows that its vaccination coverage is a great driver of life expectancy.\
+
+
+The optimum model had an adjusted R squared of 0.8908 which was a very slight increase from the regression model. This informed us that the model explained 89.08\% of the variations as the remaining 10.92\% would be explained by other factors not included in the model.\
+
+We proceeded to have a comparison table between the multiple linear regression model and the optimum model.\
+
+```{r model_comparison_table, echo=FALSE, results='asis'}
+# Generating the comparison table
+stargazer(healthy_model, optimum_model, 
+          type = "latex", 
+          header = FALSE, 
+          single.row = TRUE,
+          title = "Comparison of Healthy MLR and Optimum Stepwise Models",
+          column.labels = c("Healthy Model", "Optimum Model"))
+```
+
+The adjusted R squared was still high for typical real world scenarios which indicated possible violations of the assumptions. Diagnostics were done onto these parametric tests to determine if indeed there were violations of the assumptions.\
 
 

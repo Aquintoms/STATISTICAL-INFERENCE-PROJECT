@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2026.2.4)  19 JUN 2026 01:04
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2026.2.4)  20 JUN 2026 15:28
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1383,19 +1383,159 @@ Underfull \hbox (badness 10000) in paragraph at lines 911--917
 File: Statistical_inference_project_files/figure-latex/Schoolfinal-1.png Graphi
 c file (type bmp)
 <Statistical_inference_project_files/figure-latex/Schoolfinal-1.png>
-[17] (./Statistical_inference_project.aux)
+
+Underfull \hbox (badness 10000) in paragraph at lines 953--957
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 958--973
+
+ []
+
+[17]
+Underfull \hbox (badness 10000) in paragraph at lines 999--1001
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1007--1009
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1010--1017
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1018--1027
+
+ []
+
+[18]
+Overfull \hbox (8.766pt too wide) in paragraph at lines 1048--1048
+[]\TU/lmtt/m/n/10 ## alternative hypothesis: true difference in means between g
+roup 0 and group 1 is not equal to 0[] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1050--1065
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1066--1070
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1074--1077
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1078--1086
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1087--1095
+
+ []
+
+
+Overfull \vbox (3.37393pt too high) detected at line 1118
+ []
+
+[19] [20]
+Underfull \hbox (badness 10000) in paragraph at lines 1203--1207
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1208--1220
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1224--1229
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1230--1237
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1238--1249
+
+ []
+
+[21]
+Underfull \hbox (badness 10000) in paragraph at lines 1305--1309
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1310--1319
+
+ []
+
+[22]
+Underfull \hbox (badness 10000) in paragraph at lines 1356--1374
+
+ []
+
+[23]
+Underfull \hbox (badness 10000) in paragraph at lines 1446--1462
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1463--1468
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1469--1472
+
+ []
+
+[24]
+Underfull \hbox (badness 10000) in paragraph at lines 1519--1539
+
+ []
+
+[25]
+Underfull \hbox (badness 10000) in paragraph at lines 1540--1544
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1545--1547
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1591--1595
+
+ []
+
+[26] (./Statistical_inference_project.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 21920 strings out of 468174
- 402558 string characters out of 5436828
- 1011371 words of memory out of 5000000
- 50316 multiletter control sequences out of 15000+600000
- 634254 words of font info for 91 fonts, out of 8000000 for 9000
+ 21949 strings out of 468174
+ 403193 string characters out of 5436828
+ 1011673 words of memory out of 5000000
+ 50339 multiletter control sequences out of 15000+600000
+ 634286 words of font info for 95 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 90i,11n,114p,1026b,588s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 90i,11n,114p,1026b,684s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on Statistical_inference_project.pdf (17 pages).
+Output written on Statistical_inference_project.pdf (26 pages).
