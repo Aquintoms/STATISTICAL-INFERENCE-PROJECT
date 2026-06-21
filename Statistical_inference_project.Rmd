@@ -309,7 +309,7 @@ p2 <- ggplot(df, aes(sample = Life_expectancy)) +
   stat_qq() + stat_qq_line(color = "red") +
   labs(title = "QQ Plot: Life Expectancy")
 
-# Combine plots side-by-side using patchwork
+# Combining plots side-by-side
 p1 + p2
 
 # Shapiro-Wilk
