@@ -1593,4 +1593,234 @@ which indicated possible violations of the assumptions. Diagnostics were
 done onto these parametric tests to determine if indeed there were
 violations of the assumptions.\\
 
+The order of assessment of the parametric tests were as follows:\\
+* \textbf{Density plots} - This was to investigate if normality was
+violated especially on the welch test.\\
+* \textbf{Diagnostic plots} - These were used for both the
+\texttt{anova\_model} and the \texttt{optimum\_model}. The diagnostic
+plots under ANOVA checked for Linearity/Homoskedasticity and normality
+while for the optimum model checked for all the assumptions of OLS.\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Checking the distributional shape for both economic groups}
+\FunctionTok{ggplot}\NormalTok{(df\_clean, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Life\_expectancy, }\AttributeTok{fill =} \FunctionTok{factor}\NormalTok{(Economy\_status\_Developed))) }\SpecialCharTok{+}
+  \FunctionTok{geom\_density}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.4}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{"Welch T{-}Test Diagnostic: Distribution of Life Expectancy by Economic Status"}\NormalTok{,}
+       \AttributeTok{x =} \StringTok{"Life Expectancy (Years)"}\NormalTok{,}
+       \AttributeTok{fill =} \StringTok{"Economic Status (0 = Developing, 1 = Developed)"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position =} \StringTok{"bottom"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{Statistical_inference_project_files/figure-latex/ttest_diagnostics-1.pdf}}
+
+From the density plot above, it was evident that normality was violated.
+A negative skew was exhibited especially on the \texttt{developing}
+density plot rather than a symmetrical bell shape. Due to this, the
+assumption of normality did not hold ground thus paving way for a
+non-parametric model.\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Setting up a side{-}by{-}side layout for the two critical ANOVA plots}
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mfrow =} \FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{))}
+
+\CommentTok{\# Homoscedasticity Check}
+\FunctionTok{plot}\NormalTok{(anova\_model, }\AttributeTok{which =} \DecValTok{1}\NormalTok{, }\AttributeTok{main =} \StringTok{"ANOVA: Residuals vs Fitted"}\NormalTok{)}
+
+\CommentTok{\# Residual Normality Check}
+\FunctionTok{plot}\NormalTok{(anova\_model, }\AttributeTok{which =} \DecValTok{2}\NormalTok{, }\AttributeTok{main =} \StringTok{"ANOVA: Normal Q{-}Q Plot"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{Statistical_inference_project_files/figure-latex/anova_diagnostics-1.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Resetting layout back to default}
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mfrow =} \FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Interpretations/Discussions}\\
+* \texttt{Normality} - Heavy tails were exhibited on the QQ Plot. This
+proved the violation of normality indicating that the project should
+move to non-parametric models.\\
+* \texttt{Homoskedasticity} - The distinct vertical bands under the
+Residual vs Fitted plot differ from each other. This shows that the
+residuals have different spreads. Due to this, it proves
+heteroskedasticity is made manifest.\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mfrow =} \FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{, }\DecValTok{2}\NormalTok{))}
+
+\FunctionTok{plot}\NormalTok{(optimum\_model)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{Statistical_inference_project_files/figure-latex/mlr_diagnostics-1.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mfrow =} \FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Interpretations/Discussions}\\
+* \texttt{Homoskedasticity} - Both the Residual vs Fitted plot and the
+Scale-Location plot showed uneven spread of residuals across the fitted
+values. This indicated heteroskedasticity.\\
+* \texttt{Normality} - As confirmed previously, normality was violated
+as exhibited by the QQ Plots. There were heavy tails thus visually
+presenting this violation.\\
+* \texttt{Linearity} - From the Residuals vs Fitted plot, the red line
+showed a curve rather than a red straight line. This proved that
+linearity was violated.\\
+* \texttt{Influential\ Outliers} - The Residuals vs Leverage plot showed
+that there were no points outside the cook's distance. This informed us
+that there were no influential outliers in the dataset.\\
+
+From the diagnostics, it was seen that most of the assumptions were
+violated. This showed that the parametric models struggled to obtain
+mathematically sound conclusions. This warranted the project to move to
+their non-parametric counterparts.\\
+
+\section{Non-Parametric Tests}\label{non-parametric-tests}
+
+Non-parametric tests would neutralize severe skewness and ignore unequal
+variances thus providing robust results. This is by focusing on the
+median ranks and not the raw means.\\
+
+\subsection{1. Mann-Whitney U Test (Wilcoxon Rank-Sum
+Test)}\label{mann-whitney-u-test-wilcoxon-rank-sum-test}
+
+\emph{This is the non-parametric equivalent of the Welch T-Test}\\
+
+\textbf{Research Question:} Is there a significant difference in the
+distribution of life expectancy between developed and developing
+nations?\\
+
+\textbf{Hypothesis}\\
+* \textbf{Null Hypothesis} \(H_0:\) The distribution of life expectancy
+is the same for both developed and developing countries.\\
+* \textbf{Alternate Hypothesis} \(H_1:\) The distribution of life
+expectancy differs significantly between developed and developing
+nations.\\
+
+The Mann-Whitney U Test neutralises the exhibited skew.\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mann\_whitney }\OtherTok{\textless{}{-}} \FunctionTok{wilcox.test}\NormalTok{(Life\_expectancy }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Economy\_status\_Developed, }\AttributeTok{data =}\NormalTok{ df\_clean)}
+\FunctionTok{print}\NormalTok{(mann\_whitney)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Wilcoxon rank sum test with continuity correction
+## 
+## data:  Life_expectancy by Economy_status_Developed
+## W = 85918, p-value < 2.2e-16
+## alternative hypothesis: true location shift is not equal to 0
+\end{verbatim}
+
+The Wilcoxon rank sum test gave us a p-value which was much smaller than
+our alpha of 0.05. We reject the null hypothesis and conclude that there
+the distribution of life expectancy differs significantly between
+developed and developing nations. The developed nations indeed exhibit a
+higher median life expectancy than developing ones.\\
+
+\subsection{2. Kruskal-Wallis Test}\label{kruskal-wallis-test}
+
+\emph{This is the non-parametric equivalent of One Way ANOVA}\\
+
+\textbf{Research Question:} Is there a significant difference in
+distribution of life expectancy across different geographical regions in
+the world?\\
+
+\textbf{Hypothesis}\\
+* \textbf{Null Hypothesis} \(H_0:\) The distribution of life expectancy
+is the same for all geographical regions.\\
+* \textbf{Alternate Hypothesis} \(H_1:\) At least one geographical
+region's distribution differs from others.\\
+
+Kruskal Wallis test does not assume homoskedasticity or normality thus
+an appropriate alternative to the previous ANOVA test.\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{kruskal\_wallis }\OtherTok{\textless{}{-}} \FunctionTok{kruskal.test}\NormalTok{(Life\_expectancy }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Region, }\AttributeTok{data =}\NormalTok{ df\_clean)}
+\FunctionTok{print}\NormalTok{(kruskal\_wallis)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Kruskal-Wallis rank sum test
+## 
+## data:  Life_expectancy by Region
+## Kruskal-Wallis chi-squared = 1678.9, df = 8, p-value < 2.2e-16
+\end{verbatim}
+
+Kruskal-Wallis test gave us a p-value which was close to zero meaning it
+was highly significant. We reject the null hypothesis and conclude that
+different geographical regions possess different levels of life
+expectancy. The distribution of life expectancy is not the same
+worldwide.\\
+
+\subsection{3. Spearman Rank
+Correlation}\label{spearman-rank-correlation}
+
+\emph{This evaluates the non-linear relationship prevalent in the
+Multiple Linear Regression}\\
+
+\textbf{Research Question:} Is there a significant relationship between
+years of schooling and life expectancy?\\
+
+\textbf{Hypothesis}\\
+* \textbf{Null Hypothesis} \(H_0:\) There is no monotonic relationship
+between schooling and life expectancy (\(\rho_s = 0\)).\\
+* \textbf{Alternate Hypothesis} \(H_1:\) There is a monotonic
+relationship between schooling and life expectancy
+(\(\rho_s \neq 0\)).\\
+
+Due to Spearman Rank focussing on Ranks, it evaluates the relationships
+based on how the values behave; monotonic ranks. If one variable goes
+up, the other goes up.\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{spearman }\OtherTok{\textless{}{-}} \FunctionTok{cor.test}\NormalTok{(df\_clean}\SpecialCharTok{$}\NormalTok{Schooling, df\_clean}\SpecialCharTok{$}\NormalTok{Life\_expectancy, }\AttributeTok{method =} \StringTok{"spearman"}\NormalTok{)}
+\FunctionTok{print}\NormalTok{(spearman)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Spearman's rank correlation rho
+## 
+## data:  df_clean$Schooling and df_clean$Life_expectancy
+## S = 1020895912, p-value < 2.2e-16
+## alternative hypothesis: true rho is not equal to 0
+## sample estimates:
+##       rho 
+## 0.7392564
+\end{verbatim}
+
+The Spearman Rank Test gave us a p-value which was less than 0.05 and
+much closer to zero indicating significance. Due to having a very low
+p-value, we reject the null hypothesis and conclude that there is a
+monotonic relationship between schooling and life expectancy. We
+obtained a Spearman coefficient of \(\approx 0.74\) which indicated a
+strong monotonic relationship. This informed us that, as schooling years
+increased, life expectancy increased. This cemented our earlier argument
+in including \texttt{Schooling} despite having the baseline VIF score of
+\(\approx 5\).\\
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
 \end{document}

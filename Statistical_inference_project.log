@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2026.2.4)  20 JUN 2026 15:28
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2026.2.4)  21 JUN 2026 19:11
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1523,19 +1523,134 @@ Underfull \hbox (badness 10000) in paragraph at lines 1591--1595
 
  []
 
-[26] (./Statistical_inference_project.aux)
+
+Underfull \hbox (badness 10000) in paragraph at lines 1596--1603
+
+ []
+
+[26]
+File: Statistical_inference_project_files/figure-latex/ttest_diagnostics-1.pdf 
+Graphic file (type pdf)
+<use Statistical_inference_project_files/figure-latex/ttest_diagnostics-1.pdf>
+
+Underfull \hbox (badness 10000) in paragraph at lines 1619--1624
+
+ []
+
+File: Statistical_inference_project_files/figure-latex/anova_diagnostics-1.pdf 
+Graphic file (type pdf)
+<use Statistical_inference_project_files/figure-latex/anova_diagnostics-1.pdf>
+[27]
+Underfull \hbox (badness 10000) in paragraph at lines 1647--1655
+
+ []
+
+File: Statistical_inference_project_files/figure-latex/mlr_diagnostics-1.pdf Gr
+aphic file (type pdf)
+<use Statistical_inference_project_files/figure-latex/mlr_diagnostics-1.pdf>
+[28]
+Underfull \hbox (badness 10000) in paragraph at lines 1672--1685
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1686--1690
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1693--1696
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1700--1701
+
+ []
+
+[29]
+Underfull \hbox (badness 10000) in paragraph at lines 1702--1705
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1706--1712
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1713--1714
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1731--1736
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1739--1740
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1741--1744
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1745--1750
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1751--1753
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1769--1774
+
+ []
+
+[30]
+Underfull \hbox (badness 10000) in paragraph at lines 1779--1780
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1781--1783
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1784--1790
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1791--1794
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1814--1823
+
+ []
+
+[31] (./Statistical_inference_project.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 21949 strings out of 468174
- 403193 string characters out of 5436828
- 1011673 words of memory out of 5000000
- 50339 multiletter control sequences out of 15000+600000
+ 21984 strings out of 468174
+ 405298 string characters out of 5436828
+ 1011886 words of memory out of 5000000
+ 50371 multiletter control sequences out of 15000+600000
  634286 words of font info for 95 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  90i,11n,114p,1026b,684s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on Statistical_inference_project.pdf (26 pages).
+Output written on Statistical_inference_project.pdf (31 pages).

@@ -520,4 +520,113 @@ stargazer(healthy_model, optimum_model,
 
 The adjusted R squared was still high for typical real world scenarios which indicated possible violations of the assumptions. Diagnostics were done onto these parametric tests to determine if indeed there were violations of the assumptions.\
 
+The order of assessment of the parametric tests were as follows:\
+* **Density plots** -  This was to investigate if normality was violated especially on the welch test.\
+* **Diagnostic plots** - These were used for both the `anova_model` and the `optimum_model`. The diagnostic plots under ANOVA checked for Linearity/Homoskedasticity and normality while for the optimum model checked for all the assumptions of OLS.\
 
+```{r ttest_diagnostics, echo=TRUE, fig.height=4, fig.width=8}
+# Checking the distributional shape for both economic groups
+ggplot(df_clean, aes(x = Life_expectancy, fill = factor(Economy_status_Developed))) +
+  geom_density(alpha = 0.4) +
+  labs(title = "Welch T-Test Diagnostic: Distribution of Life Expectancy by Economic Status",
+       x = "Life Expectancy (Years)",
+       fill = "Economic Status (0 = Developing, 1 = Developed)") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+From the density plot above, it was evident that normality was violated. A negative skew was exhibited especially on the `developing` density plot rather than a symmetrical bell shape. Due to this, the assumption of normality did not hold ground thus paving way for a non-parametric model.\
+
+```{r anova_diagnostics, echo=TRUE, fig.height=4, fig.width=9}
+# Setting up a side-by-side layout for the two critical ANOVA plots
+par(mfrow = c(1, 2))
+
+# Homoscedasticity Check
+plot(anova_model, which = 1, main = "ANOVA: Residuals vs Fitted")
+
+# Residual Normality Check
+plot(anova_model, which = 2, main = "ANOVA: Normal Q-Q Plot")
+
+# Resetting layout back to default
+par(mfrow = c(1, 1))
+```
+
+**Interpretations/Discussions**\
+* `Normality` - Heavy tails were exhibited on the QQ Plot. This proved the violation of normality indicating that the project should move to non-parametric models.\
+* `Homoskedasticity` - The distinct vertical bands under the Residual vs Fitted plot differ from each other. This shows that the residuals have different spreads. Due to this, it proves heteroskedasticity is made manifest.\
+
+
+```{r mlr_diagnostics, echo=TRUE, fig.height=7, fig.width=9}
+
+par(mfrow = c(2, 2))
+
+plot(optimum_model)
+
+par(mfrow = c(1, 1))
+```
+
+**Interpretations/Discussions**\
+* `Homoskedasticity` - Both the Residual vs Fitted plot and the Scale-Location plot showed uneven spread of residuals across the fitted values. This indicated heteroskedasticity.\
+* `Normality` - As confirmed previously, normality was violated as exhibited by the QQ Plots. There were heavy tails thus visually presenting this violation.\
+* `Linearity` - From the Residuals vs Fitted plot, the red line showed a curve rather than a red straight line. This proved that linearity was violated.\
+* `Influential Outliers` - The Residuals vs Leverage plot showed that there were no points outside the cook's distance. This informed us that there were no influential outliers in the dataset.\
+
+From the diagnostics, it was seen that most of the assumptions were violated. This showed that the parametric models struggled to obtain mathematically sound conclusions. This warranted the project to move to their non-parametric counterparts.\
+
+# Non-Parametric Tests
+Non-parametric tests would neutralize severe skewness and ignore unequal variances thus providing robust results. This is by focusing on the median ranks and not the raw means.\
+
+## 1. Mann-Whitney U Test (Wilcoxon Rank-Sum Test)
+*This is the non-parametric equivalent of the Welch T-Test*\
+
+**Research Question:** Is there a significant difference in the distribution of life expectancy between developed and developing nations?\
+
+**Hypothesis**\
+* **Null Hypothesis** $H_0:$ The distribution of life expectancy is the same for both developed and developing countries.\
+* **Alternate Hypothesis** $H_1:$ The distribution of life expectancy differs significantly between developed and developing nations.\
+
+The Mann-Whitney U Test neutralises the exhibited skew.\
+
+
+```{r Mann_Whitney, echo=TRUE}
+mann_whitney <- wilcox.test(Life_expectancy ~ Economy_status_Developed, data = df_clean)
+print(mann_whitney)
+```
+The Wilcoxon rank sum test gave us a p-value which was much smaller than our alpha of 0.05. We reject the null hypothesis and conclude that there the distribution of life expectancy differs significantly between developed and developing nations. The developed nations indeed exhibit a higher median life expectancy than developing ones.\
+
+
+## 2. Kruskal-Wallis Test
+*This is the non-parametric equivalent of One Way ANOVA*\
+
+**Research Question:** Is there a significant difference in distribution of life expectancy across different geographical regions in the world?\
+
+**Hypothesis**\
+* **Null Hypothesis** $H_0:$ The distribution of life expectancy is the same for all geographical regions.\
+* **Alternate Hypothesis** $H_1:$ At least one geographical region's distribution differs from others.\
+
+Kruskal Wallis test does not assume homoskedasticity or normality thus an appropriate alternative to the previous ANOVA test.\
+
+```{r Kruskal_Wallis, echo=TRUE}
+kruskal_wallis <- kruskal.test(Life_expectancy ~ Region, data = df_clean)
+print(kruskal_wallis)
+```
+Kruskal-Wallis test gave us a p-value which was close to zero meaning it was highly significant. We reject the null hypothesis and conclude that different geographical regions possess different levels of life expectancy. The distribution of life expectancy is not the same worldwide.\
+
+## 3. Spearman Rank Correlation
+*This evaluates the non-linear relationship prevalent in the Multiple Linear Regression*\
+
+**Research Question:** Is there a significant relationship between years of schooling and life expectancy?\
+
+**Hypothesis**\
+* **Null Hypothesis** $H_0:$ There is no monotonic relationship between schooling and life expectancy ($\rho_s = 0$).\
+* **Alternate Hypothesis** $H_1:$ There is a monotonic relationship between schooling and life expectancy ($\rho_s \neq 0$).\
+
+Due to Spearman Rank focussing on Ranks, it evaluates the relationships based on how the values behave; monotonic ranks. If one variable goes up, the other goes up.\
+
+```{r Spearman, echo=TRUE}
+spearman <- cor.test(df_clean$Schooling, df_clean$Life_expectancy, method = "spearman")
+print(spearman)
+```
+The Spearman Rank Test gave us a p-value which was less than 0.05 and much closer to zero indicating significance. Due to having a very low p-value, we reject the null hypothesis and conclude that there is a monotonic relationship between schooling and life expectancy. We obtained a Spearman coefficient of $\approx 0.74$ which indicated a strong monotonic relationship. This informed us that, as schooling years increased, life expectancy increased. This cemented our earlier argument in including `Schooling` despite having the baseline VIF score of $\approx 5$. \
+
+---
