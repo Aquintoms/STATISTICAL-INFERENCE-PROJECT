@@ -1,0 +1,39 @@
+\begin{thebibliography}{}
+
+\bibitem[Balaj et~al., 2024]{balaj2024}
+Balaj, M. et~al. (2024).
+\newblock Effects of education on adult mortality: a global systematic review and meta-analysis.
+\newblock {\em The Lancet Public Health}.
+\newblock DOI: \url{https://doi.org/10.1016/S2468-2667(23)00306-7}.
+
+\bibitem[Gochiashvili, 2023]{lasha_gochiashvili_2023}
+Gochiashvili, L. (2023).
+\newblock Life expectancy ({WHO}) fixed.
+\newblock Kaggle.
+\newblock Available at: \url{https://www.kaggle.com/ds/3065197}, DOI: 10.34740/KAGGLE/DS/3065197.
+
+\bibitem[Grossman, 1972]{grossman1972}
+Grossman, M. (1972).
+\newblock On the concept of health capital and the demand for health.
+\newblock {\em Journal of Political Economy}, 80(2):223--255.
+\newblock DOI: \url{https://doi.org/10.1086/259880}.
+
+\bibitem[Lleras-Muney, 2005]{llerasmuney2005}
+Lleras-Muney, A. (2005).
+\newblock The relationship between education and adult mortality in the united states.
+\newblock {\em The Review of Economic Studies}, 72(1):189--221.
+\newblock DOI: \url{https://doi.org/10.1111/0034-6527.00329}.
+
+\bibitem[O'Brien, 2007]{obrien2007}
+O'Brien, R.~M. (2007).
+\newblock A caution regarding rules of thumb for variance inflation factors.
+\newblock {\em Quality \& Quantity}, 41(5):673--690.
+\newblock DOI: \url{https://doi.org/10.1007/s11135-006-9018-6}.
+
+\bibitem[{Republic of Kenya}, 2010]{kenya_alcohol_act_2010}
+{Republic of Kenya} (2010).
+\newblock The alcoholic drinks control act, no. 4 of 2010.
+\newblock Kenya Gazette Supplement No. 58 (Acts No. 4), Laws of Kenya, Chapter 121.
+\newblock Available at Kenya Law: \url{http://kenyalaw.org}.
+
+\end{thebibliography}

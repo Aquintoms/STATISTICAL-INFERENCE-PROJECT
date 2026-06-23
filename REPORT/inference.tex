@@ -1,0 +1,540 @@
+\documentclass[3pt, a4paper]{article}
+
+% --- Packages ---
+% Encoding and Geometry
+% --- 1. Packages and Global Settings (The Preamble) ---
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\geometry{margin=0.75in} % Compact margins to save space
+
+% Typography and Formatting
+\usepackage{microtype}
+\usepackage{booktabs}
+\usepackage{setspace}     
+\setstretch{1.15}         % Tight report line spacing
+\usepackage{enumitem}    
+
+% Math
+\usepackage{amsmath, amssymb}
+
+% Figures, Floats, and Captions
+\usepackage{graphicx, float, placeins, caption, subcaption, tabularx}
+\usepackage{longtable}
+\usepackage{array}
+
+% Citations
+\usepackage[authoryear, longnamesfirst]{natbib}
+
+% Hyperlinks (Always load this last!)
+\usepackage{hyperref}
+
+% --- Global Whitespace & Font Tightening Configurations ---
+% Tighten Lists
+\setlist{topsep=2pt, itemsep=0pt, partopsep=0pt, parsep=0pt}
+
+% Clamp Down on Float Padding around tables/figures
+\setlength{\textfloatsep}{10pt plus 2pt minus 4pt}  
+\setlength{\intextsep}{10pt plus 2pt minus 2pt}    
+\setlength{\floatsep}{8pt plus 2pt minus 2pt}      
+\setlength{\abovecaptionskip}{5pt}                 
+\setlength{\belowcaptionskip}{3pt}                 
+
+% Tighten Paragraph Gaps
+\setlength{\parskip}{4pt plus 1pt minus 1pt}       
+\setlength{\parindent}{15pt}
+
+% --- Title Page Information ---
+\title{\textbf{Statistical Inference on Global Health Data: A comprehensive analysis of the WHO Life Expectancy Dataset}}
+\author{
+    \textbf{Student Name:} Wesley M. Gathua \\
+    \textbf{Registration Number:} 223347 \\
+    \textbf{Course Name:} MSc Data Science and Analytics \\
+    \textbf{Lecturer's Name:} Prof. Jacob Ong'ala \\
+    \textbf{Institution:} Strathmore University \\
+}
+\date{\today}
+
+\begin{document}
+
+\pagenumbering{gobble}
+
+\maketitle
+
+\thispagestyle{empty}
+
+\newpage
+
+\tableofcontents
+\newpage
+
+\pagenumbering{arabic}
+
+% --- 2. Introduction ---
+\section{Introduction}
+% Provide background information on the problem, explain the motivation for selecting the dataset, state objectives, and outline statistical questions.
+\indent Throughout history, man has desired to increase his lifespan. This is seen from the different advancements in technology, medicine as well as nutrition across the centuries. Man has tried to improve his survival as this deeply woven in his DNA. From the discovery of fire, to the invention of the wheel and to the discovery of penicillin, man has had an innate desire to improve his life expectancy. Looking at the modern era, this is till the case albeit in a more complex manner. Several factors today contribute to the life expectancy of humanity. These factors range from the environment whose conservancy is a very hot topic in the modern era to the socio-economic status of a given country. Not a single factor can single handedly determine the life expectancy of a given country. The World Health Organization (WHO) has been at the forefront in analyzing health data which very much coincides with life expectancy. These data are very important especially in this modern era as it aids in policy making for governments and other stakeholders. For instance, the Government of Kenya in 2010 through the \citet{kenya_alcohol_act_2010}, enacted The Alcoholic Drinks Control Act, commonly referred to as the 'Mututho Law'. This was a with a view of reducing the consumption of alcohol which had plagued the country for a while.
+
+The study selected the \texttt{WHO Life Expectancy Dataset} \citep{lasha_gochiashvili_2023} for its comprehensive nature and relevance to global health. The dataset contains 2,864 observations and 21 variables. This includes both numerical and categorical data such as country, region, life expectancy, adult mortality, alcohol consumption, gross domestic product (GDP) on health and more. This diversity of the variables allowed for analysis of the factors influencing life expectancy across different countries and regions. The project aimed to model the predictors of global life expectancy and evaluate geographical and economic inequalities. The analysis applied various statistical inference methods. This included both parametric methods and their non-parametric counterparts when assumptions are violated. The statistical questions that were addressed were:
+\begin{itemize}[noitemsep,topsep=0pt]
+    \item Is there a significant difference in life expectancy between developed and developing countries?
+    \item Are there variations in life expectancy across different regions of the world?
+    \item What are the key predictors of life expectancy, and how do they interact with each other?
+    \item How do the results from parametric methods compare to those from non-parametric methods when assumptions are not met?
+\end{itemize}
+
+
+% --- 3. Dataset Description ---
+\section{Dataset Description}
+\subsection{Source and Scope}
+The data we used for this study was obtained from the Kaggle data repository \citep{lasha_gochiashvili_2023}. It was titled ``Life Expectancy (WHO) Fixed'' . It contained life expectancy, immunization, health and economic and demographic data of 179 countries from 2000 to 2015. The data was originally compiled from the World Health Organization (WHO). After initial processing of the dataset, it resulted to $N = 2,864$ observations representing various countries worldwide. 
+
+\subsection{Variables and Definitions}
+We focused on one primary feature of interest, \texttt{Life\_expectancy} as it was our dependent variable, with a series of other independent predictors. These predictors were evaluated during hypothesis testing and regression. The data types include continuous numeric figures, log-transformed continuous numeric figures and categorical variables. Table \ref{tab:variables} below shows a detailed description of the core variables used in the analysis:
+
+\begin{table}[H]
+    \centering
+    \small % Shrinks the font size
+    \renewcommand{\arraystretch}{0.9} % Tightens row spacing (default is 1)
+    \caption{Description of key variables used in the analysis}
+    \label{tab:variables}
+    \begin{tabularx}{\textwidth}{@{} l l X @{}}
+        \toprule
+        \textbf{Variable} & \textbf{Type} & \textbf{Description} \\
+        \midrule
+        \texttt{Life\_expectancy} & Cont. & Life expectancy at birth (years). (Dependent Variable) \\
+        \texttt{Economy\_status} & Cat. & Economic classification (1 = Developed, 0 = Developing). \\
+        \texttt{Region} & Cat. & Nine distinct global geographic zones. \\
+        \texttt{Schooling} & Cont. & Average years of educational attainment. \\
+        \texttt{Alcohol} & Cont. & Per capita consumption of pure alcohol (liters). \\
+        \texttt{BMI} & Cont. & Average Body Mass Index. \\
+        \texttt{Polio} & Cont. & Polio immunization coverage (\%). \\
+        \texttt{Incidents\_HIV} & Cont. & HIV incidents per 1,000 population. \\
+        \texttt{Thinness} & Cont. & Prevalence of thinness (10--19 years) (\%). \\
+        \texttt{GDP\_per\_capita} & Cont. & GDP per capita in USD. \\
+        \texttt{Population\_mln} & Cont. & Total national population (millions). \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\subsection{Data Cleaning and Preprocessing}
+We proceeded to preprocessing of the dataset to avoid spurious results which would have led to erroneous conclusions. We addressed skewness of some of the continuous variables such as GDP and Population. This is through logarithmic transformations in order to manage their variances and reduce the potential influence of extreme outliers. We also investigated the encoded variables such as Economy\_status\_Developed and Economy\_status\_Developing to ensure they were mutually exclusive. Since statistical analysis was the main objective, preprocessing helped especially when conducting the parametric tests such as the Welch T-Test, One-Way ANOVA and Multiple Linear Regression would be accurate and not plagued by improper values.
+
+% --- 4. Methodology ---
+\section{Methodology}
+
+The methodological approach was designed to rigorously investigate the predictors of global life expectancy. R was the preferred language to analyze the data. We employed the following packages for this study: "ggplot2", "corrplot", "patchwork", "kableExtra", "broom", "stargazer", "car" and "tidyverse". This analysis was guided by a streamlined pipeline whereby we began by initial exploratory data analysis. This was to understand the underlying mechanics of the dataset. This guided us in how subsequent processes would follow. From the exploratory data analysis, we proceeded to conducted parametric and non-parametric tests. We also assessed the assumptions of the parametric tests by doing a deep-dive into the diagnostics of the OLS assumptions. These are much explained in the sections below.
+
+\subsection{Exploratory Data Analysis (EDA) Procedures}
+Before we could conduct any formal statistical procedures, we began by understanding structure of the dataset. We checked for null/missing values as well as zero-masked values. We however noted that there were 38 zeroes under the \texttt{Alcohol\_consumption}. A mini-hypothesis was that these zeroes came from Muslim majority countries where alcohol is prohibited. This was investigated and truly enough, the 38 zeroes came from 7 Muslim majority countries. 
+
+We also proceeded to investigate if presence of zeros under the diseases such as `Polio` or `Diphtheria` meant that no immunization coverage was done or it meant that there were no such cases. An inspection of these diseases proved that there was a strict maximum threshold of 99. For actual cases, this value would scale to higher figures such as tens of thousands. This evidently proved that these values were actual percentage coverage rather than actual case counts. We needed to do an investigation of these percentages. This was to check whether the percentages meant 99\% covered or not covered. This was done by the use of a correlation. If it meant covered, there would be an inverse relationship between the disease and \texttt{Infant\_deaths} or \texttt{Under\_five\_deaths}. The correlation proved that there was an inverse relationship between the diseases and the child mortality. This meant that the values exhibited by the diseases meant the extensiveness of
+the vaccinations. A 99\% coverage meant that most parts of this particular country was vaccinated against the specific disease. We also saw that this 99\% coverage came from developed countries.
+
+Continuous variables were inspected by the use of histograms, scatter-plots and heatmaps. This aided in identifying the distribution of the data and the relationships between the variables. Variables such as GDP and Population in millions were log transformed due to their skewness. High linear associations were indeed flagged and omitted as this would hurt the validity of the parametric tests that followed.
+
+\subsection{Parametric Statistical Methods}
+
+\subsubsection{Welch's Two-Sample T-Test}
+The Welch Test kicked off the statistical inference of the data. The study's aim here was to investigate if there was a difference in life expectancy between Developed and Developing countries. The Welch Two sample T-test was selected in order to account for the potential unequal variance of the two groups.  The test statistic is calculated as:
+$$t = \frac{\bar{X}_1 - \bar{X}_2}{\sqrt{\frac{s_1^2}{n_1} + \frac{s_2^2}{n_2}}}$$
+where $\bar{X}_i$, $s_i^2$, and $n_i$ represent the sample mean, sample variance, and sample size of group $i$, respectively. 
+\begin{itemize}[noitemsep,topsep=0pt]
+    \item \textbf{Null Hypothesis ($H_0$):} $\mu_{\text{developed}} - \mu_{\text{developing}} = 0$ (There is no difference in mean life expectancy).
+    \item \textbf{Alternative Hypothesis ($H_1$):} $\mu_{\text{developed}} - \mu_{\text{developing}} \neq 0$ (There is a significant difference).
+    \item \textbf{Operational Assumptions:} (1) Continuous dependent variable, (2) Independence of observations across and within groups and (3) Normality of the sampling distributions. The raw data indeed exhibited non-normality but the Central Limit Theorem (CLT) justified the use of this parametric test due to the large sample size ($N = 2,864$).
+\end{itemize}
+
+\subsubsection{One-Way Analysis of Variance (ANOVA)}
+The second parametric test was the \texttt{One Way Analysis of Variance (ANOVA)}. The study wanted to investigate whether there was a significant difference in the mean life expectancy across the different geographic regions. The method partitions total variance into variance between groups and variance within groups using the $F$-statistic framework:
+$$F = \frac{\text{Mean Square Between (MSB)}}{\text{Mean Square Within (MSW)}}$$
+\begin{itemize}[noitemsep,topsep=0pt]
+    \item \textbf{Null Hypothesis ($H_0$):} $\mu_1 = \mu_2 = \dots = \mu_k$ (Mean life expectancy is equal across all geographic regions).
+    \item \textbf{Alternative Hypothesis ($H_1$):} At least one regional mean differs significantly from the others.
+    \item \textbf{Operational Assumptions:} (1) Normality of residuals within each group, (2) Independence of observations and (3) Homoskedasticity (same variance).
+\end{itemize}
+\noindent Accompanying the ANOVA test was the Tukey Post-hoc test. As the ANOVA test shows the mean life expectancy of at least one region is different from another region, the Tukey Post-hoc test compares every region with all the other regions.
+
+\subsubsection{Multiple Linear Regression (MLR)}
+To crown the parametric tests segmented, the project proceeded to investigate the drivers of life expectancy by employing multiple linear regression. The initial full model is formulated as:
+$$Y_i = \beta_0 + \beta_1 X_{1i} + \beta_2 X_{2i} + \dots + \beta_k X_{ki} + \epsilon_i$$
+where $Y_i$ is the predicted life expectancy, $\beta_0$ is the intercept, $\beta_k$ are the partial slope coefficients, $X_{ki}$ represent the health, social, and economic predictors, and $\epsilon_i$ represents the stochastic error term. We checked for multicollinearity through the Variance Inflation Test (VIF). Variables having a VIF score of $> 5$ were automatically dropped. We finally applied the bi-directional stepwise elimination method to obtain the optimum model. This was obtained from the model which had the lowest Akaike Information Criterion (AIC). This was with a view to prune statistically redundant variables and yield the most parsimonious, optimal model.
+
+\subsection{Diagnostic tests}
+Diagnostic tests proceeded in order to validate the outcome of the parametric tests. This comprised a series of visualizations which elaborated if the assumptions were held or indeed violated. The assumptions tested were as follows:
+\begin{itemize}[noitemsep,topsep=0pt]
+    \item \textbf{Linearity:} Done via \textit{Residuals vs. Fitted} plots to check for random scattering. Structural patterns indicate non-linear relationships.
+    \item \textbf{Homoskedasticity:} Evaluated using \textit{Residuals vs. Fitted} and \textit{Scale-Location} plots. Constant vertical spread across all fitted values confirms stable variance. Unequal indicates heteroskedasticity.
+    \item \textbf{Normality of Errors:} Inspected via \textit{Normal Q-Q} plots. Adherence of standardized residuals to the $45^\circ$ reference line confirms normality as systematic deviations signal heavy tails or severe skewness.
+    \item \textbf{Absence of Multicollinearity:} Quantified using the Variance Inflation Factor (VIF) for each predictor:
+    $$\text{VIF}_k = \frac{1}{1 - R_k^2}$$
+    A conservative threshold of $\text{VIF} > 5$ was established to flag and isolate problematic correlated variables.
+\end{itemize}
+
+\subsection{Non-parametric Statistical Methods}
+The diagnostic tests act as validation measures of the parametric tests. When the assumptions are violated, distribution-free methods are employed to prevent erroneous outcomes leading to erroneous conclusions.
+
+\subsubsection{Mann-Whitney U Test (Wilcoxon Rank-Sum Test)}
+This is the non-parametric equivalent of the Welch T-Test. It bypasses normality limitations by converting continuous values to ranks. It evaluates whether the distribution scales of two independent groups differ significantly.
+\begin{itemize}[noitemsep,topsep=0pt]
+    \item \textbf{Null Hypothesis ($H_0$):} The distribution of life expectancy is stochastically identical between developed and developing nations.
+    \item \textbf{Alternative Hypothesis ($H_1$):} The distribution of life expectancy differs significantly between the two economic groups.
+\end{itemize}
+
+\subsubsection{Kruskal-Wallis Test}
+This is the non-parametric equivalent of One Way ANOVA. Since it is a  rank-based analysis, it evaluates distribution differences across three or more independent groups without assuming homoskedasticity or normality.
+\begin{itemize}[noitemsep,topsep=0pt]
+    \item \textbf{Null Hypothesis ($H_0$):} The distribution ranks of life expectancy are identical across all nine geographic regions.
+    \item \textbf{Alternative Hypothesis ($H_1$):} At least one region's distribution stochastically dominates or differs from the others.
+\end{itemize}
+
+\subsubsection{Spearman Rank Correlation}
+This relaxes the strict linearity constraints of parametric correlation and regression.  By using its correlation coefficient ($\rho_s$), it measures the strength and direction of a monotonic relationship. This is by calculating the Pearson correlation between the ranked values of two variables:
+$$\rho_s = 1 - \frac{6 \sum d_i^2}{n(n^2 - 1)}$$
+where $d_i$ is the difference between the ranks of corresponding variables, and $n$ is the sample size.
+\begin{itemize}[noitemsep,topsep=0pt]
+    \item \textbf{Null Hypothesis ($H_0$):} $\rho_s = 0$ (There is no monotonic relationship between educational attainment and life expectancy).
+    \item \textbf{Alternative Hypothesis ($H_1$):} $\rho_s \neq 0$ (A significant monotonic relationship exists).
+\end{itemize}
+
+% --- 5. Results ---
+\section{Results}
+% Present findings. Include tables, figures, descriptive stats, hypothesis test results, model outputs, and statistical summaries.
+\subsection{Exploratory Data Analysis (EDA) procedures}
+Initial EDA's evaluated the distributions as well as the descriptive statistics of the $N=2,864$ observations. The study obtained the summary statistics of the numeric variables. Table \ref{tab:descriptive_stats} exhibits the various measures of central tendency and dispersion.
+
+\begin{table}[H]
+    \centering
+    \caption{Descriptive Statistics of the Global Health Dataset}
+    \label{tab:descriptive_stats}
+    \small % Slightly reduces font size so the large GDP numbers fit beautifully
+    \begin{tabular}{lrrrrrr}
+        \toprule
+        \textbf{Variable} & \textbf{Mean} & \textbf{Median} & \textbf{Variance} & \textbf{SD} & \textbf{Range} & \textbf{IQR} \\
+        \midrule
+        Infant Deaths & 30.36 & 19.60 & 758.35 & 27.54 & 136.30 & 39.25 \\
+        Under-Five Deaths & 42.94 & 23.10 & 1,986.48 & 44.57 & 222.60 & 56.33 \\
+        Adult Mortality & 192.25 & 163.84 & 13,204.37 & 114.91 & 669.98 & 139.88 \\
+        Alcohol Consumption & 4.82 & 4.02 & 15.86 & 3.98 & 17.87 & 6.58 \\
+        Hepatitis B Coverage (\%) & 84.29 & 89.00 & 255.86 & 16.00 & 87.00 & 18.00 \\
+        Measles Coverage (\%) & 77.34 & 83.00 & 348.18 & 18.66 & 89.00 & 29.00 \\
+        BMI & 25.03 & 25.50 & 4.81 & 2.19 & 12.30 & 3.20 \\
+        Polio Coverage (\%) & 86.50 & 93.00 & 227.42 & 15.08 & 91.00 & 16.00 \\
+        Diphtheria Coverage (\%) & 86.27 & 93.00 & 241.31 & 15.53 & 83.00 & 16.00 \\
+        HIV Incidents & 0.89 & 0.15 & 5.67 & 2.38 & 21.67 & 0.38 \\
+        GDP per Capita (USD) & 11,540.92 & 4,217.00 & 286,787,076.14 & 16,934.79 & 112,270.00 & 11,141.25 \\
+        Population (Millions) & 36.68 & 7.85 & 18,628.39 & 136.49 & 1,379.78 & 21.59 \\
+        Thinness (10-19 Years) & 4.87 & 3.30 & 19.70 & 4.44 & 27.60 & 5.60 \\
+        Thinness (5-9 Years) & 4.90 & 3.40 & 20.48 & 4.53 & 28.50 & 5.70 \\
+        Schooling (Years) & 7.63 & 7.80 & 10.06 & 3.17 & 13.00 & 5.20 \\
+        Life Expectancy & 68.86 & 71.40 & 88.47 & 9.41 & 44.40 & 12.70 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\noindent \texttt{GDP\_per\_capita} had a median of *4217.00* and a mean of $11540.92$. A similar trend was seen in \texttt{Population\_mln}. Its mean was $36.68$ and its median was $7.85$.
+
+\noindent The dependent variable \texttt{Life\_expectancy} exhibited a mean of 68.86 years and a standard deviation of 9.41 years. Figure \ref{fig:life_expectancy} shows the distribution of our dependent variable.
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.55\textwidth]{images/Life_expectancy_distribution.png}
+    \caption{Distribution of global life expectancy across the dataset. The histogram generated from the exploratory data analysis exhibits a clear left skew, indicating that the majority of observations fall within the 70 to 80-year range, while a smaller tail of lower life expectancies pulls the mean downwards.}
+    \label{fig:life_expectancy}
+\end{figure}
+
+\noindent We plotted a boxplot of life expectancy with the economy status developed. Figure \ref{fig:econ_boxplot} shows how a country's economic tier dictates the life expectancy of its citizens.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.55\textwidth]{images/expect_econ_boxplot.png}
+    \caption{Comparison of life expectancy distributions across distinct economic tiers, where 0 represents developing nations and 1 denotes developed nations. Developed countries display a significantly higher median life expectancy and a much narrower interquartile range, whereas developing nations exhibit far greater volatility and lower overall health outcomes.}
+    \label{fig:econ_boxplot}
+\end{figure}
+
+The study investigated the relationship between life expectancy and schooling through a scatter-plot. Figure \ref{fig:schooling_scatter} shows the positive relationship between them whereby as years of schooling increases, life expectancy also increases.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.65\textwidth]{images/expect_school_scatterplot.png}
+    \caption{Scatterplot illustrating the positive relationship between institutional educational attainment and life expectancy. The overlaid red trend line highlights a distinct upward trajectory, demonstrating that higher average years of schooling strongly correlate with expanded life longevity globally.}
+    \label{fig:schooling_scatter}
+\end{figure}
+
+\noindent A heatmap was generated to visualize and quantify the relationship between all the numeric variables. Figure \ref{fig:correlation_matrix} exhibits these relationships. The heatmap validated the scatter-plot as there there was a correlation ($0.73$) between \texttt{Schooling} and \texttt{Life\_expectancy}. We also saw a relationship of \texttt{Life\_expectancy} and \texttt{GDP\_per\_capita} as it was valued at $0.58$. There was a relationship ($-0.95$) between \texttt{Life\_expectancy} and \texttt{Adult\_mortality}. We also a relationship between \texttt{Polio} and  \texttt{Diphtheria} at $0.95$, \texttt{Infant\_deaths} and \texttt{Under\_five\_deaths} at $0.99$, and \texttt{Thinness\_ten\_nineteen\_years} and \texttt{Thinness\_five\_nine\_years} at $0.94$.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{images/corr_matrix_numeric.png}
+    \caption{Triangular correlation matrix heatmap computed across all numerical indicators within the dataset. The colour scale maps positive associations in deep blue and strong negative relationships in dark red, clearly identifying features like child mortality with powerful inverse correlations to life expectancy, and schooling with a strong positive association ($r = 0.73$).}
+    \label{fig:correlation_matrix}
+\end{figure}
+
+We assessed some distributional assumptions. We selected 3 variables for this visualizations. We picked \texttt{Life\_expectancy} (Figure \ref{subfig:expectancy_norms}) as it was our dependent variable. Previously, we had observed that \texttt{GDP\_per\_capita} was skewed. This was also selected to see how it violated normality (Figure \ref{subfig:gdp_norms}). We also selected a somewhat symmetric variable which was \texttt{schooling} (Figure \ref{subfig:schooling_norms}) to serve as a comparison metric to the skewed variable. Figure \ref{fig:normality_checks}  shows histograms alongside the Q-Q Plots. The Shapiro-Wilk normality test was also done for each of the three variables and all their p-values were \texttt{2.2e-16}, essentially below alpha ($0.05$).
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=0.5\textwidth]{images/expectancy_assumptions.png}
+        \caption{Distribution and Q-Q plot for Life Expectancy}
+        \label{subfig:expectancy_norms}
+    \end{subfigure}
+    \caption{Parametric diagnostics (Part I)} % You can keep a general caption here
+    \label{fig:normality_checks_a}
+\end{figure}
+
+\begin{figure}[H]
+    \ContinuedFloat % This keeps the figure number the same
+    \centering
+    % Subfigure (b)
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=0.5\textwidth]{images/GDP_assumptions.png}
+        \caption{Distribution and Q-Q plot for GDP per Capita}
+        \label{subfig:gdp_norms}
+    \end{subfigure}
+    
+    \vspace{0.6cm}
+    
+    % Subfigure (c)
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=0.5\textwidth]{images/schooling_assumptions.png}
+        \caption{Distribution and Q-Q plot for Schooling}
+        \label{subfig:schooling_norms}
+    \end{subfigure}
+    
+    \caption{Parametric diagnostics (Part II). The left panels display empirical density curves against standard histograms, while the right panels represent normal Q-Q plots.}
+    \label{fig:normality_checks_bc}
+\end{figure}
+
+\subsection{Parametric Statistical Methods}
+\subsubsection{Welch's Two-Sample T-Test}
+A Welch Two-Sample t-test was conducted to compare life expectancy between developed and developing nations. The mean life expectancy for developed nations was $78.51$ years, while developing nations recorded a mean of $66.34$ years. The test yielded a statistic of $t = \text{[-53.685]}$. This resulted in a p-value of $p = \text{[2.2e-16]}$.
+
+\noindent The distributional shape of the two economic tiers was visualized as shown by the density plot in figure \ref{fig:welch_t_diagnostic} below.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\textwidth]{images/welch_diagnostic.png}
+    \caption{Welch $t$-test distribution diagnostic plot, visualizing the overlapping density curves of life expectancy profiles partitioned by development status (0 representing developing and 1 representing developed nations).}
+    \label{fig:welch_t_diagnostic}
+\end{figure}
+
+\subsubsection{One-Way Analysis of Variance (ANOVA) and Tukey post-hoc test}
+A One-Way ANOVA evaluated the variation in life expectancy across the nine global geographic regions. The analysis produced a a p-value of $p = \text{[2.2e-16]}$. The Tukey post-hoc test compares multiple regions together.  \texttt{North America - Africa} for instance had a difference of 19.99 years with a p-value $< 0.0001$. Table \ref{tab:tukey_region} shows the Tukey post-hoc results.
+
+\begin{small} 
+\begin{longtable}{>{\raggedright\arraybackslash}p{5.2cm}rrrr}
+\caption{Tukey HSD Post Hoc Pairwise Comparisons for Life Expectancy by Geographic Region} \label{tab:tukey_region} \\
+\toprule
+\textbf{Comparison (Region Pair)} & \textbf{Difference} & \textbf{Lower CI (95\%)} & \textbf{Upper CI (95\%)} & \textbf{\textit{p}-adj} \\
+\midrule
+\endhead
+
+\bottomrule
+\endfoot
+
+Asia - Africa & 11.608 & 10.537 & 12.678 & $< 0.0001$ \\
+Central America and Caribbean - Africa & 14.590 & 13.381 & 15.799 & $< 0.0001$ \\
+European Union - Africa & 19.868 & 18.797 & 20.938 & $< 0.0001$ \\
+Middle East - Africa & 16.128 & 14.771 & 17.485 & $< 0.0001$ \\
+North America - Africa & 19.994 & 17.322 & 22.667 & $< 0.0001$ \\
+Oceania - Africa & 11.670 & 10.175 & 13.166 & $< 0.0001$ \\
+Rest of Europe - Africa & 16.678 & 15.357 & 17.999 & $< 0.0001$ \\
+South America - Africa & 14.933 & 13.490 & 16.377 & $< 0.0001$ \\
+\midrule
+Central America and Caribbean - Asia & 2.983 & 1.636 & 4.330 & $< 0.0001$ \\
+European Union - Asia & 8.260 & 7.036 & 9.484 & $< 0.0001$ \\
+Middle East - Asia & 4.521 & 3.039 & 6.002 & $< 0.0001$ \\
+North America - Asia & 8.387 & 5.649 & 11.124 & $< 0.0001$ \\
+Oceania - Asia & 0.063 & $-1.547$ & 1.672 & 1.0000 \\
+Rest of Europe - Asia & 5.071 & 3.622 & 6.519 & $< 0.0001$ \\
+South America - Asia & 3.326 & 1.765 & 4.887 & $< 0.0001$ \\
+\midrule
+European Union - Central America and Caribbean & 5.278 & 3.931 & 6.625 & $< 0.0001$ \\
+Middle East - Central America and Caribbean & 1.538 & $-0.046$ & 3.122 & 0.0651 \\
+North America - Central America and Caribbean & 5.404 & 2.610 & 8.199 & $< 0.0001$ \\
+Oceania - Central America and Caribbean & $-2.920$ & $-4.624$ & $-1.216$ & $< 0.0001$ \\
+Rest of Europe - Central America and Caribbean & 2.088 & 0.534 & 3.642 & 0.0010 \\
+South America - Central America and Caribbean & 0.343 & $-1.315$ & 2.002 & 0.9994 \\
+\midrule
+Middle East - European Union & $-3.740$ & $-5.221$ & $-2.258$ & $< 0.0001$ \\
+North America - European Union & 0.127 & $-2.611$ & 2.864 & 1.0000 \\
+Oceania - European Union & $-8.197$ & $-9.806$ & $-6.588$ & $< 0.0001$ \\
+Rest of Europe - European Union & $-3.190$ & $-4.638$ & $-1.741$ & $< 0.0001$ \\
+South America - European Union & $-4.934$ & $-6.495$ & $-3.374$ & $< 0.0001$ \\
+\midrule
+North America - Middle East & 3.866 & 1.004 & 6.728 & 0.0009 \\
+Oceania - Middle East & $-4.458$ & $-6.270$ & $-2.645$ & $< 0.0001$ \\
+Rest of Europe - Middle East & 0.550 & $-1.122$ & 2.222 & 0.9839 \\
+South America - Middle East & $-1.195$ & $-2.964$ & 0.575 & 0.4764 \\
+\midrule
+Oceania - North America & $-8.324$ & $-11.254$ & $-5.394$ & $< 0.0001$ \\
+Rest of Europe - North America & $-3.316$ & $-6.161$ & $-0.471$ & 0.0092 \\
+South America - North America & $-5.061$ & $-7.965$ & $-2.157$ & $< 0.0001$ \\
+\midrule
+Rest of Europe - Oceania & 5.008 & 3.222 & 6.793 & $< 0.0001$ \\
+South America - Oceania & 3.263 & 1.385 & 5.141 & $< 0.0001$ \\
+\midrule
+South America - Rest of Europe & $-1.745$ & $-3.487$ & $-0.002$ & 0.0493 \\
+\end{longtable}
+\end{small}
+
+\subsubsection{Multiple Linear Regression (MLR)}
+This was the last parametric test. It evaluated the extent by which the economic indicators, healthcare of a country, physical metrics and demographic scales such as region predict the life expectancy of a country. Multi-collinearity was checked via the VIF scores as a threshold of $> 5$ was set. \texttt{Region} and \texttt{Schooling} had a VIF of $18.623$ and $5.075$ respectively but were both retained. Table \ref{tab:regression_comparison} shows the multiple regression model denoted as \texttt{healthy model}. A bi-directional stepwise optimization was done to obtain the optimum model and table \ref{tab:regression_comparison} exhibits it. The adjusted R squared was $0.891$. A comparison of both the multiple regression and the optimum model is shown below:
+
+\begin{singlespace}
+\small
+\begin{longtable}{lcc}
+% 1. Table Caption and Label
+\caption{OLS Regression Comparison: Baseline MLR vs. Optimum Stepwise Model} \label{tab:regression_comparison} \\
+\toprule
+ & \multicolumn{2}{c}{\textit{Dependent variable: Life Expectancy (Years)}} \\ 
+\cline{2-3} 
+\\[-1.8ex] & \textbf{Healthy Baseline Model} & \textbf{Optimum Stepwise Model} \\ 
+ & (1) & (2)\\ 
+\midrule 
+\endhead % This line ensures that the column headers repeat automatically if the table breaks over to the next page
+
+\bottomrule
+\endfoot % This line places a bottom rule at the end of the first page fragment
+
+% --- Table Content Starts Here ---
+\multicolumn{3}{l}{\textit{Geographic Region (Baseline: Africa)}} \\
+\hspace{3mm} Asia & 3.370$^{***}$ (0.238) & 3.387$^{***}$ (0.238) \\ 
+\hspace{3mm} Central America \& Caribbean & 5.173$^{***}$ (0.264) & 5.185$^{***}$ (0.264) \\ 
+\hspace{3mm} European Union & 5.530$^{***}$ (0.315) & 5.556$^{***}$ (0.313) \\ 
+\hspace{3mm} Middle East & 2.228$^{***}$ (0.315) & 2.237$^{***}$ (0.315) \\ 
+\hspace{3mm} North America & 3.262$^{***}$ (0.544) & 3.346$^{***}$ (0.534) \\ 
+\hspace{3mm} Oceania & 3.581$^{***}$ (0.325) & 3.621$^{***}$ (0.321) \\ 
+\hspace{3mm} Rest of Europe & 5.350$^{***}$ (0.311) & 5.367$^{***}$ (0.309) \\ 
+\hspace{3mm} South America & 4.669$^{***}$ (0.299) & 4.689$^{***}$ (0.298) \\ 
+\midrule
+\multicolumn{3}{l}{\textit{Socio-Economic \& Health Predictors}} \\
+\hspace{3mm} Alcohol Consumption & $-$0.291$^{***}$ (0.026) & $-$0.291$^{***}$ (0.026) \\ 
+\hspace{3mm} Hepatitis B & $-$0.005 (0.006) &  \\ 
+\hspace{3mm} Measles & $-$0.002 (0.004) &  \\ 
+\hspace{3mm} BMI & 0.205$^{***}$ (0.050) & 0.202$^{***}$ (0.050) \\ 
+\hspace{3mm} Polio & 0.153$^{***}$ (0.007) & 0.149$^{***}$ (0.005) \\ 
+\hspace{3mm} HIV Incidents & $-$1.183$^{***}$ (0.029) & $-$1.182$^{***}$ (0.029) \\ 
+\hspace{3mm} Thinness (10--19 years) & 0.038$^{**}$ (0.019) & 0.039$^{**}$ (0.019) \\ 
+\hspace{3mm} Schooling (Years) & 0.216$^{***}$ (0.041) & 0.215$^{***}$ (0.041) \\ 
+\hspace{3mm} Log(GDP per capita) & 3.129$^{***}$ (0.076) & 3.125$^{***}$ (0.075) \\ 
+\hspace{3mm} Log(Population) & 0.325$^{***}$ (0.038) & 0.329$^{***}$ (0.038) \\ 
+\midrule
+Constant & 21.640$^{***}$ (1.197) & 21.576$^{***}$ (1.195) \\ 
+\midrule 
+Observations & 2,864 & 2,864 \\ 
+R$^{2}$ & 0.891 & 0.891 \\ 
+Adjusted R$^{2}$ & 0.891 & 0.891 \\ 
+Residual Std. Error & 3.109 (df = 2845) & 3.109 (df = 2847) \\ 
+F Statistic & 1,297.546$^{***}$ (df = 18; 2845) & 1,460.187$^{***}$ (df = 16; 2847) \\ 
+\midrule
+\multicolumn{3}{r}{\textit{Note:} $^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01.} \\ 
+\end{longtable}
+\end{singlespace}
+
+\subsection {Diagnostic Tests}
+We performed diagnostic tests onto the Parametric tests. We tested if the various assumptions such as homoskedasticity and normality held. The following figure \ref{fig:anova_diagnostic} and figure \ref{fig:mlr_diagnostic} were generated for the ANOVA and Multiple Linear regression respectively.
+
+% --- First Independent Figure: ANOVA ---
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{images/ANOVA_diagnostic.png}
+    \caption{ANOVA Diagnostic Plots: Residuals vs Fitted and Normal Q-Q}
+    \label{fig:anova_diagnostic}
+\end{figure}
+
+% --- MLR Plot: Stays EXACTLY here ---
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.00\textwidth]{images/MLR_diagnostic.png}
+    \caption{Multiple Linear Regression (MLR) Residual Diagnostics}
+    \label{fig:mlr_diagnostic}
+\end{figure}
+
+\subsection{Non-parametric Statistical Methods}
+\subsubsection{Mann-Whitney U Test (Wilcoxon Rank-Sum Test)}
+The Wicoxon Rank-Sum test investigated whether there was a significant difference in the distribution of life expectancy between developed and developing nations. It yielded a test statistic of $W = \text{[85918]}$, with a resulting p-value of $p = \text{[2.2e-16]}$.
+\subsubsection{Kruskal-Wallis Test}
+Kruskal-Wallis test evaluated if there was a significant difference in distribution of life expectancy across different geographical regions in the world. The test returned a chi-squared statistic of $\chi^2 = \text{[1678.9]}$, with degrees of freedom $df = \text{[8]}$ and a p-value of $p = \text{[2.2e-16]}$.
+\subsubsection{Spearman Rank Correlation}
+Spearman Rank correlation checked if there was a monotonic relationship between years of schooling and life expectancy. The calculation resulted in a correlation coefficient of $\rho_s = \text{[0.74]}$, accompanied by a p-value of $p = \text{[2.2e-16]}$.
+
+% --- 6. Discussion ---
+\section{Discussion}
+% Interpret results in context of objectives. Compare outcomes from parametric and non-parametric methods, discuss unexpected results, and practical implications.
+The main objective of this study was to model the crucial predictors of global life expectancy. This was by evaluating the geographic and economical disparities through a series of parametric a non-parametric tests. The study provided insights on how longevity is achieved globally despite a series of inter-woven modern parameters.
+
+\subsection{Interpretation of the Exploratory Data Analysis}
+The study began by doing a deep dive into the dataset to try to understand the inner mechanics behind life expectancy. We investigated the null values and came across the zeroes under the variable alcohol consumption. Subsequent statistics proved this not to be missing values but Muslim majority nations which are generally governed by Sharia Law whereby alcohol is prohibited. Investigations were also conducted onto the various vaccinable diseases and the study identified that their values were a percentage coverage rather than case counts. This is because of their cap of a maximum value being $99$. An inverse relationship was also seen between \texttt{Polio} and \texttt{Infant\_death}. The study conducted the correlation of these to prove that the percentage truly was a coverage of vaccination and not non-vaccinated areas. 
+
+The study conducted validity checks on the economic tier variables. Our objectives heavily relied on both variables dictating life expectancy thus upon investigations, they were seen to be mutually exclusive. We proceeded to do descriptive statistics to all numeric variables. Skewness was evident from certain variables such as \texttt{GDP\_per\_capita} and \texttt{Population\_mln}. The difference between their means and medians was substantial which was a direct sign of their skewness. Visualizations were done in order to identify important information that was not immediately visible from the summary statistics. Our dependent variable \texttt{Life\_expectancy} exhibited a negative skew as expected. The life expectancy throughout human history has been increasing thus in our modern era, it had to be in a higher value (age) thus the skew. The study did a comparison of life expectancy across different economic tiers and it was determined that developed nations have a higher life expectancy than developing. This was subsequently validated in the statistical analysis. A scatter-plot of life expectancy against years of schooling was generated. There was a positive relationship indicating that the more learned a country is, the higher the life expectancy. This is expected as more education leads to the betterment of a society in almost all forms. A country's healthcare system becomes better due to research and this is a direct promotion of life expectancy if all factors are held constant. Much of this is discussed in Multiple Linear Regression and Spearman Rank Correlation. 
+
+The project generated a heatmap across all numeric variables. The scatter-plot was validated as schooling had a strong relationship with life expectancy. There was a moderate relationship between \texttt{Life\_expectancy} and \texttt{GDP\_per\_capita}. A strong negative relationship was exhibited between \texttt{Life\_expectancy} and \texttt{Adult\_mortality}. This inverse relationship can be explained as the life expectancy increases, it results in a decrease in the rates of adult mortality. Several variables had a close to perfect relationship. These were \texttt{Polio} and  \texttt{Diphtheria}, \texttt{Infant\_deaths} and \texttt{Under\_five\_deaths}, and \texttt{Thinness\_ten\_nineteen\_years} and \texttt{Thinness\_five\_nine\_years}. They were omitted due to them being smoking guns for multi-collinearity, in order to maintain statistical accuracy in the subsequent parametric tests. To crown the EDA section, assessment of the distributions was done. This was done onto our dependent variable \texttt{Life\_expectancy}, \texttt{GDP\_per\_capita} and \texttt{Schooling}. GDP was selected due to its already established prevalent skewness as Schooling was selected due to its median and mean values being close together. Density plots and Q-Q plots were constructed for each. For all three variables, their Q-Q plots had heavy tails which meant that they were skewed. This was seconded by their Shapiro-Wilk test whose p-values were well below $0.05$ indicating their significance and violation of normality. 
+
+\subsection{Statistical Analysis}
+\subsubsection{Economic and Geographic differences}
+With guidance from the objective questions, the study was to determine if life expectancy was determined by the economic tier of a country or its geographical region. We conducted a Welch T-Test whereby from its test statistic ($-53.7$), we saw that there was a big difference between the means of the developing and developed nations. It was calculated as the mean life expectancy of developing nations minus the developed ones. We saw that the average life expectancy of developing nations is $66.34$ years and that of developed nations is $78.51$ years. This was previously seen from the boxplot. A p-value of $2.2e-16$ was obtained. Since we obtained a p-value of less than 0.05, the null hypothesis was rejected and we concluded that developed nations have a significantly higher mean life expectancy than developing ones by approximately 12.17 years. The non-parametric counterpart did not deviate from this findings. The  Wilcoxon rank sum test statistic evaluated the difference in ranks. The p-value obtained was much smaller than our alpha of 0.05. We rejected the null hypothesis and concluded that there the distribution of life expectancy differs significantly between developed and developing nations. The developed nations indeed exhibited a higher median life expectancy than developing ones.
+
+The ANOVA and Kruskal-Wallis tests investigated whether there were variations in life expectancy between different regions in the world. ANOVA was paired by the Tukey post-hoc test whereby the former showed whether the mean life expectancy of at least one region was different from other regions while the latter compared all regions together to find gaps. The ANOVA test yielded a p-value close to zero. We rejected the null hypothesis and concluded that there is a difference in mean life expectancy at least in one geographical region. The Tukey post-hoc test indicated that there were significantly large disparities between North America/EU/Asia and Africa.  This showed that the former was outliving the latter by more than 10 years on average. For instance, \texttt{North America - Africa} had a difference of 19.99 years with a p-value very close zero indicating that it was significant. Non significant disparities were also identified such as \texttt{Oceania-Asia} which had a difference of 0.06 years with a p-value of 1. Kruskal-Wallis test did not have contrary statistics as its p-value was close to zero. We rejected the null hypothesis and concluded that different geographical regions possessed different levels of life expectancy. The distribution of life expectancy was not the same worldwide.
+\subsubsection{Prediction of Life expectancy (MLR Analysis)}
+As \texttt{Life\_expectancy} was the dependent variable for this entire study, we needed to investigate the its key predictors and how they interacted with each other. Several values were omitted such as \texttt{Year} to prevent autocorrelation and \texttt{Country} to prevent dummy variables being generated as \texttt{Region} was preferred over it (less dummy variables). Initial iterations of the multiple regression analysis yielded very high adjusted R squared which indicated a high likelihood of overfitting and/or data leakage. In order to identify which variables had high multicollinearity, we proceeded to conduct the Variance Inflation Factor Test (VIF). Variables that had a VIF $>5$ or $>10$ would be candidates for omission. The VIF scores brought to life the inherent multicollinearity plaguing the model as explained by the VIF sample below:
+\begin{itemize}[noitemsep,topsep=0pt]
+    \item \texttt{Under\_five\_deaths} and \texttt{Adult\_mortality} had a $9.07$ and $8.27$ respectively. They were used to calculate life expectancy directly. This was a situation of data leakage as well as endogeneity. Both variables were dropped.
+    \item \texttt{Log\_GDP} and \texttt{Economy\_status\_Developed} had VIF scores greater than $5$. Since they both explained the same thing in that a country with a high GDP is in a higher economic tier, we dropped the categorical variable \texttt{Economic\_status\_Developed}. 
+    \item \texttt{Region} had a VIF score of $18.6$. It was not omitted due its properties. The dataset had 9 different regions making the Degrees of Freedom to be 8. A series of dummy variables were created which in turned inflated the VIF. The GVIF penalized it due to the many dummy variables so that it could be observed on an equal mathematically playing field. Squaring it ($1.2$) leads to $\approx 1.4$, which was much below the 5 threshold.
+    \item \texttt{Schooling} had a VIF score of $5.07$. As explained by \citet{grossman1972} and \citet{llerasmuney2005}, dropping \texttt{Schooling} would introduce severe omitted variable bias. This is because it is a fundamental structural determinant of health. Additionally, \citet{balaj2024} argues that every single additional year of schooling reduces the risk of adult mortality by 1.9\%. Finally, a VIF of 5 falls well within acceptable limits according to standard econometric practices as explained by \citet{obrien2007}. Its exclusion would misrepresent the independent causal effect that educational attainment exerts on life expectancy separate from income. We decided not to drop \texttt{Schooling} as it was essential for this project.
+\end{itemize}
+The study obtained a adjusted R squared of $0.891$. This informed us that the model explained 89.1\% of the variation as the remaining 10.9\% would be explained by other factors not included in the model. The project proceeded to do a stepwise bi-directional function to obtain the optimum model (lowest AIC score) which had the crucial features that predicted \texttt{Life\_expectancy}. Several features were removed but the model maintained an adjusted R squared of $0.891$. A sample of the intercepts were interpreted as follows:
+\begin{itemize}[noitemsep,topsep=0pt]
+    \item \texttt{RegionEuropeanUnion} had a coefficient of $\approx 5.55$. This meant that holding all other factors constant, individuals living in the European Union have a life expectancy approximately 5.55 years higher than those living in the baseline region (Africa). This was the variable with the highest coefficient overall which meant that people living in the European Union have a higher life expectancy as compared to other regions.
+    \item \texttt{Alcohol\_consumption} had a coefficient of $\approx -0.29$. This meant that a unit change in the consumption of alcohol, would result in 0.29 reduction in life expectancy when all other factors are held constant. This explained that alcohol did not promote long life.\ 
+    \item \texttt{Polio} had a coefficient of $\approx 0.15$. This meant that a unit increase in Polio's vaccination coverage would result in an increase of 0.15 years in life expectancy when all other factors are held constant. Polio was the only vaccination disease that was picked by the optimum model which shows that its vaccination coverage is a great driver of life expectancy.
+\end{itemize}
+
+Spearman Rank Test investigated the non-linear relationship in the Multiple Linear Regression. The study wanted to analyze the relationship between the effect of years of schooling and life expectancy. The Spearman Rank Test gave us a p-value which was less than 0.05 and much closer to zero indicating significance. Due to having a very low p-value, we rejected the null hypothesis and concluded that there was a monotonic relationship between schooling and life expectancy. We obtained a Spearman coefficient of $\approx 0.74$ which indicated a strong monotonic relationship. This informed us that, as schooling years increased, life expectancy increased. This cemented our earlier argument in including \texttt{Schooling} despite having the baseline VIF score of $\approx 5$.
+
+\subsubsection{Validation Metrics}
+All parametric tests held various assumptions in order to invoked. The study needed to conduct diagnostics of this assumptions to prove whether the parametric tests were well suited for the dataset. The Welch Two Sample t-Test was validated using a density plot. Both economic tiers exhibited non-normality as they were negatively skewed. This paved the way for its non-parametric counterpart which was the Mann-Whitney test. Diagnostic measures were conducted onto the \texttt{anova\_model} and the following was revealed:
+\begin{itemize}[noitemsep,topsep=0pt]
+    \item \texttt{Normality} - Heavy tails were exhibited on the Q-Q Plot. This proved the violation of normality indicating that the project needed to transition to a non-parametric model such as Kruskal-Wallis
+    \item \texttt{Homoskedasticity} - The distinct vertical bands under the Residual vs Fitted plot differed from each other. This showed that the residuals had different spreads. Due to this, it proved that heteroskedasticity was made manifest.
+\end{itemize}
+
+The Multiple Linear Regression model was also put the test to see if its assumptions were violated. The following were the findings:
+\begin{itemize}[noitemsep,topsep=0pt]
+    \item \texttt{Homoskedasticity} - Both the Residual vs Fitted plot and the Scale-Location plot showed uneven spread of residuals across the fitted values. This indicated heteroskedasticity.
+    \item \texttt{Normality} - Normality was violated as exhibited by the QQ Plots. There were heavy tails thus visually presenting this violation.
+    \item \texttt{Linearity} - From the Residuals vs Fitted plot, the red line showed a curve rather than a red straight line. This proved that linearity was violated.
+    \item \texttt{Influential Outliers} - The Residuals vs Leverage plot showed that there were no points outside the cook's distance. This informed us that there were no influential outliers in the dataset.
+\end{itemize}
+From the diagnostics, it was seen that most of the assumptions were violated thus a relaxation of the assumptions was needed through the employment of non-parametric ones. Due to non-parametric tests reliance on median rather than mean, they effortlessly bypassed the observed skewness and unequal variances. The fact that the non-parametric p-values ($p < 0.05$) perfectly aligned with the significance levels of the parametric tests solidifies the conclusions of this study. The identified economic and geographic drivers of life expectancy are highly robust and exist independently of the specific statistical distribution of the dataset.
+
+\subsection{Practical Implications}
+The study identified several variables that are important for the longevity of man. For instance, \texttt{Schooling} having a positive and a monotonic relationship with \texttt{Life\_expectancy} shows that governments should always hold education in high regard and try as much as possible to improve it. From education, we have advancements of technology which aid in improving the quality of life. Education is well tied to healthcare as research in medicine leads to eradication of various diseases as well as faster diagnosis. This is tied with vaccination for as we noted, \texttt{Polio} proved to be a significant predictor of life expectancy. More coverage of Polio vaccination improved the life expectancy. Governments especially in the African continent should strive to ensure Polio vaccines are administered to prevent spread of the disease, to promote the quality of life of its people. To sum it all up, for all these to be well executed, the GDP of a particular country would dictate the level to which other variables could be adjusted. It was evident that developed countries had a higher life expectancy than developing ones. For the developing nations, priority ought to be given to education to promote better research and to vaccinations with a view of improving the nation's healthcare.
+
+% --- 7. Conclusions ---
+\section{Conclusions}
+
+\subsection{Summary of Major Findings}
+The project's main aim was to determine the factors that increase life expectancy. This is with the help of a comprehensive dataset which bears national health, economic and demographic metrics. We determined that life expectancy is evenly distributed and it is heavily dictated by the geographical region and the GDP of a particular country.  We determined that high income countries tend to have a higher life expectancy than developing nations. Our multiple linear regression model identified that the profound variables that promote life expectancy were the economic output (\texttt{Log\_GDP}), the geographic region, and (\texttt{Schooling}) which is heavily backed by academic literature. Vaccination coverage proved to be another critical predictor as a country's healthcare determined the life expectancy of its citizens. These were profound and positive predictors of life expectancy.
+Our framework successfully validated the core objectives of the study. The parametric tests being our baseline models laid the foundations of the project although diagnostic visualizations revealed the violations of normality and homoskedasticity. Our transition to non-parametric tests confirmed the earlier observed economic and geographic differences in life expectancy. They proved that these disparities were indeed genuine and not plagued by influential outliers.
+
+\subsection{Statistical Conclusions}
+Our framework successfully validated the core objectives of the study. The parametric tests being our baseline models laid the foundations of the project although diagnostic visualizations revealed the violations of normality and homoskedasticity. Our transition to non-parametric tests confirmed the earlier observed economic and geographic differences in life expectancy. They proved that these disparities were indeed genuine and not plagued by influential outliers. 
+
+\subsection{Limitations of the Study}
+We experienced one major limitation during the analysis of this dataset. Due to the various correlation metrics that were used in the study, from heatmaps to VIF scores, several variables were omitted. This was to prevent our models from crashing due to high multicollinearity. This led to some dynamics and nuances being lost. For instance, \texttt{Under\_five\_deaths} and \texttt{Adult\_mortality} were omitted for having high VIF scores as they were directly used in the calculation of life expectancy. Some variation was possibly lost due to this. This showed that purely linear models may oversimplify the complex nature of global health data.
+
+\subsection{Recommendations for Future Research}
+Future studies on global health data especially life expectancy should transition to time series analysis. This is due to the yearly changes of GDP in several countries which would in turn (if positive) improve other sectors such as vaccination coverage or schooling. Future studies should also focus on employing machine learning models such as Random Forests and Gradient Boosting due to the non-linearity of global data. This would prove to be formidable as they do not rely on the Gauss-Markov assumptions and can map complex interactions which would be difficult in linear models.
+
+% --- 8. References ---
+\bibliographystyle{apalike}
+\bibliography{references}
+% List all sources consulted in APA, Harvard, or IEEE style.
+
+\end{document}
